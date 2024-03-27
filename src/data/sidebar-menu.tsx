@@ -1,3 +1,5 @@
+import { postRouteName } from "pages/post/index.page";
+
 interface SubMenuItem {
   name: string;
   path: string;
@@ -13,6 +15,10 @@ const menuItems: MenuItem[] = [
   {
     name: "Home",
     path: "/home",
+  },
+  {
+    name: "Post",
+    path: postRouteName,
   },
 ];
 

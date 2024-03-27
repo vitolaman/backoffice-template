@@ -1,4 +1,9 @@
-import { optionsWAvatar } from "_interfaces/article.interfaces";
+export interface optionsWAvatar {
+  key: number;
+  label: string;
+  value: string;
+  avatar: string;
+}
 import ReactSelect, {
   InputActionMeta,
   MultiValue,

@@ -1,4 +1,4 @@
-import { OptionFilter } from "_interfaces/circle.interface";
+// import { OptionFilter } from "_interfaces/circle.interface";
 import React, { Fragment } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
@@ -7,7 +7,11 @@ interface props {
   modalStatus: boolean;
   handleModalStatus: () => void;
 }
-
+export interface OptionFilter {
+  key: number;
+  label: string;
+  value: string;
+}
 export default function ModalChangeStatusTokenReport({
   modalStatus,
   handleModalStatus,
