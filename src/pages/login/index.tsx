@@ -31,7 +31,7 @@ const Login = () => {
 
   return (
     <div>
-      <div className="bg-[#27A590] flex flex-col w-screen h-screen overflow-hidden">
+      <div className="bg-spix-300 flex flex-col w-screen h-screen overflow-hidden">
         <div className="w-[906px] h-[906px] relative mx-auto">
           <img
             src={Logo}

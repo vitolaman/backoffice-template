@@ -1,12 +1,9 @@
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import {
   Menu,
   MenuHandler,
   MenuItem,
   MenuList,
-  Card,
-  Avatar,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
@@ -60,10 +57,6 @@ export default function DetailPostPage(): React.ReactElement {
       label: "No",
     },
     {
-      fieldId: "id",
-      label: "Comment ID",
-    },
-    {
       fieldId: "name",
       label: "Publisher Name",
       render: (data) => <p>{data?.issuer.name}</p>,
@@ -94,7 +87,7 @@ export default function DetailPostPage(): React.ReactElement {
             <MenuHandler>
               <Button
                 size="sm"
-                className="rounded text-center text-lg hover:bg-transparent text-[#3AC4A0] border-none"
+                className="rounded text-center text-lg hover:bg-transparent text-san-juan border-none"
                 onClick={() => {
                   if (isDropdownOpen === data?.id) {
                     setIsDropdownOpen(null);
@@ -150,18 +143,14 @@ export default function DetailPostPage(): React.ReactElement {
                   setSearchParams((prev) => ({ ...prev, search: text }));
                 }}
               />
-              <button
+              <Button
                 onClick={() => {
                   handleCreateComment();
                 }}
-                className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90"
+                className="bg-san-juan text-white hover:bg-san-juan/90"
               >
                 Create Comment
-                <ChevronDownIcon
-                  className="-mr-1 -mb-1 h-5 w-5 text-white "
-                  aria-hidden="true"
-                />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

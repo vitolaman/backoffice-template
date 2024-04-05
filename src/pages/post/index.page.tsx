@@ -1,4 +1,3 @@
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { useEffect, useState } from "react";
 import {
   Menu,
@@ -10,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
-import PopUpImage from "components/modal/banner/PopUpImage";
 import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
@@ -23,8 +21,6 @@ export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useState<PostListReq>({
     search: "",
     limit: 10,
@@ -43,15 +39,6 @@ export default function PostPage(): React.ReactElement {
     void navigate("/post/create");
   };
 
-  const handleClosePopup = () => {
-    setIsImagePopupOpen(false);
-  };
-
-  const handleOpenImage = (url: string) => {
-    setSelectedImageUrl(url);
-    setIsImagePopupOpen(true);
-  };
-
   const handleDeletePost = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
@@ -68,10 +55,6 @@ export default function PostPage(): React.ReactElement {
       label: "No",
     },
     {
-      fieldId: "id",
-      label: "Post ID",
-    },
-    {
       fieldId: "name",
       label: "Publisher Name",
       render: (data) => <p>{data?.owner.name}</p>,
@@ -85,20 +68,6 @@ export default function PostPage(): React.ReactElement {
       fieldId: "owner",
       label: "Business Sector",
       render: (data) => <p>{data?.owner.business_sector}</p>,
-    },
-    {
-      fieldId: "image_url",
-      label: "Image",
-      render: (data) => (
-        <img
-          className="mt-1 me-3"
-          src={data?.images[0]}
-          alt="Images"
-          width={100}
-          height={100}
-          onClick={() => handleOpenImage(data?.images[0] as string)}
-        />
-      ),
     },
     {
       fieldId: "text",
@@ -130,7 +99,7 @@ export default function PostPage(): React.ReactElement {
             <MenuHandler>
               <Button
                 size="sm"
-                className="rounded text-center text-lg hover:bg-transparent text-[#3AC4A0] border-none"
+                className="rounded text-center text-lg hover:bg-transparent text-san-juan border-none"
                 onClick={() => {
                   if (isDropdownOpen === data?.id) {
                     setIsDropdownOpen(null);
@@ -182,18 +151,14 @@ export default function PostPage(): React.ReactElement {
                   setSearchParams((prev) => ({ ...prev, search: text }));
                 }}
               />
-              <button
+              <Button
                 onClick={() => {
                   handleCreatePost();
                 }}
-                className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90"
+                className="bg-san-juan text-white hover:bg-san-juan/90"
               >
                 Create Post
-                <ChevronDownIcon
-                  className="-mr-1 -mb-1 h-5 w-5 text-white "
-                  aria-hidden="true"
-                />
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -218,15 +183,6 @@ export default function PostPage(): React.ReactElement {
               totalPages={data!?.metadata.totalPage}
               onPageChange={handlePageChange}
             />
-          </div>
-          <div>
-            {selectedImageUrl && (
-              <PopUpImage
-                isOpen={isImagePopupOpen}
-                data={selectedImageUrl}
-                onClose={handleClosePopup}
-              />
-            )}
           </div>
         </div>
       </div>
