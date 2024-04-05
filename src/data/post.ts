@@ -8,7 +8,7 @@ export const data: PostListRes = {
       images: [
         "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg",
         "https://dummyimage.com/963x16",
-        "https://placekitten.com/117/975",
+        "https://www.littlethings.info/wp-content/uploads/2014/04/dummy-image-green-e1398449160839.jpg",
       ],
       file: "/be/allow.pdf",
       likes: 717,
@@ -24,7 +24,7 @@ export const data: PostListRes = {
         created_at: "2018-08-03T06:20:14",
       },
       by_admin: false,
-      created_at: "1986-12-05T18:44:06",
+      created_at: "2023-12-05T18:44:06",
     },
     {
       id: "3aefbeec-c0d0-4ff6-84fb-d933c6531363",

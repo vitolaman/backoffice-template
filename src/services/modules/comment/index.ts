@@ -1,23 +1,14 @@
-import {
-  CreatePostReq,
-  PostList,
-  PostListReq,
-  PostListRes,
-} from "_interfaces/post.interface";
+import { CommentListReq, CommentListRes } from "_interfaces/comment.interface";
 import { Api } from "services/api";
 
 export const postApi = Api.injectEndpoints({
   endpoints: (build) => ({
-    PostList: build.query<PostListRes, PostListReq>({
+    CommentList: build.query<CommentListRes, CommentListReq>({
       query: (param) =>
-        `admin-portal/v1/banner?search=${param.search}&limit=${param.limit}&page=${param.page}`,
+        `admin-portal/v1/banner?limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    PostDetail: build.query<PostList, { id: string }>({
-      query: (param) => `admin-portal/v1/banner/${param.id}`,
-      keepUnusedDataFor: 0,
-    }),
-    DeletePost: build.mutation<string, { id: string }>({
+    DeleteComment: build.mutation<string, { id: string }>({
       query(body) {
         return {
           url: `admin-portal/v1/banner/${body.id}`,
@@ -28,7 +19,7 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
-    CreatePost: build.mutation<string, CreatePostReq>({
+    CreateComment: build.mutation<string, { text: string; user_id: string }>({
       query(body) {
         return {
           url: `/admin-portal/v1/banner/create`,
@@ -44,8 +35,7 @@ export const postApi = Api.injectEndpoints({
 });
 
 export const {
-  useCreatePostMutation,
-  useDeletePostMutation,
-  usePostDetailQuery,
-  usePostListQuery,
+  useCommentListQuery,
+  useCreateCommentMutation,
+  useDeleteCommentMutation,
 } = postApi;

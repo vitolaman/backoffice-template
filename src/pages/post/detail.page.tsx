@@ -5,54 +5,46 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
+  Card,
+  Avatar,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
-import PopUpImage from "components/modal/banner/PopUpImage";
-import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
-import { data } from "data/post";
+import { data } from "data/comment";
+import { data as postData } from "data/post";
 import moment from "moment";
-import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
+import { Comment, CommentListReq } from "_interfaces/comment.interface";
+import { useCommentListQuery } from "services/modules/comment";
+import { useDeletePostMutation } from "services/modules/post";
+import DetailPostCard from "components/post/DetailPostCard";
 
-export const postRouteName = "post";
-export default function PostPage(): React.ReactElement {
+export const detailPostRouteName = "post/:id";
+export default function DetailPostPage(): React.ReactElement {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useState<PostListReq>({
-    search: "",
+  const [searchParams, setSearchParams] = useState<CommentListReq>({
     limit: 10,
     page: 1,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const { refetch } = usePostListQuery(searchParams);
+  const { refetch } = useCommentListQuery(searchParams);
   const [deleteBanner] = useDeletePostMutation();
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 500);
   }, []);
-
-  const handleCreatePost = (): void => {
-    void navigate("/post/create");
+  const postDetail = postData.data[0];
+  const handleCreateComment = (): void => {
+    void navigate("/comment/create");
   };
 
-  const handleClosePopup = () => {
-    setIsImagePopupOpen(false);
-  };
-
-  const handleOpenImage = (url: string) => {
-    setSelectedImageUrl(url);
-    setIsImagePopupOpen(true);
-  };
-
-  const handleDeletePost = async (id: string): Promise<void> => {
+  const handleDeleteComment = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
       await deleteBanner(statusUpdated);
@@ -62,47 +54,23 @@ export default function PostPage(): React.ReactElement {
     }
   };
 
-  const header: Columns<PostList>[] = [
+  const header: Columns<Comment>[] = [
     {
       fieldId: "index",
       label: "No",
     },
     {
       fieldId: "id",
-      label: "Post ID",
+      label: "Comment ID",
     },
     {
       fieldId: "name",
       label: "Publisher Name",
-      render: (data) => <p>{data?.owner.name}</p>,
-    },
-    {
-      fieldId: "by_admin",
-      label: "Published By",
-      render: (data) => <p>{data?.by_admin ? "Admin" : "Personal"}</p>,
-    },
-    {
-      fieldId: "owner",
-      label: "Business Sector",
-      render: (data) => <p>{data?.owner.business_sector}</p>,
-    },
-    {
-      fieldId: "image_url",
-      label: "Image",
-      render: (data) => (
-        <img
-          className="mt-1 me-3"
-          src={data?.images[0]}
-          alt="Images"
-          width={100}
-          height={100}
-          onClick={() => handleOpenImage(data?.images[0] as string)}
-        />
-      ),
+      render: (data) => <p>{data?.issuer.name}</p>,
     },
     {
       fieldId: "text",
-      label: "Post Content",
+      label: "Comment",
       render: (data) => (
         <p>
           {data?.text !== undefined &&
@@ -116,10 +84,6 @@ export default function PostPage(): React.ReactElement {
       fieldId: "owner",
       label: "Posted At",
       render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,
-    },
-    {
-      fieldId: "likes",
-      label: "Total Like",
     },
     {
       fieldId: "id",
@@ -147,7 +111,7 @@ export default function PostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeletePost(data?.id as string);
+                  void handleDeleteComment(data?.id as string);
                 }}
               >
                 <label
@@ -155,7 +119,7 @@ export default function PostPage(): React.ReactElement {
                   className="flex cursor-pointer items-center gap-2 p-2 text-red-800 hover:bg-gray-100"
                 >
                   <MdDeleteOutline className="mt-1 me-3 h-4 w-4" />
-                  Delete Post
+                  Delete Comment
                 </label>
               </MenuItem>
             </MenuList>
@@ -173,8 +137,12 @@ export default function PostPage(): React.ReactElement {
     <div className="max-w-7xl mx-auto">
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
+          <div className="flex mb-4">
+            <h3 className="text-2xl text-black font-semibold">Detail Post</h3>
+          </div>
+          <DetailPostCard postDetail={postDetail} />
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-2xl text-[#262626] font-semibold">Post List</h3>
+            <h3 className="text-2xl text-black font-semibold">Comment List</h3>
             <div className="flex items-center justify-between gap-4 ml-4">
               <SearchInput
                 placeholder="Search"
@@ -184,11 +152,11 @@ export default function PostPage(): React.ReactElement {
               />
               <button
                 onClick={() => {
-                  handleCreatePost();
+                  handleCreateComment();
                 }}
                 className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90"
               >
-                Create Post
+                Create Comment
                 <ChevronDownIcon
                   className="-mr-1 -mb-1 h-5 w-5 text-white "
                   aria-hidden="true"
@@ -202,11 +170,10 @@ export default function PostPage(): React.ReactElement {
             <div className="overflow-x-auto">
               <div className="align-middle inline-block min-w-full">
                 <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
-                  <Table<PostList>
+                  <Table<Comment>
                     columns={header}
                     data={data?.data}
                     loading={isLoading}
-                    onRowClick={(item) => navigate(`/post/${item.id}`)}
                   />
                 </div>
               </div>
@@ -218,15 +185,6 @@ export default function PostPage(): React.ReactElement {
               totalPages={data!?.metadata.totalPage}
               onPageChange={handlePageChange}
             />
-          </div>
-          <div>
-            {selectedImageUrl && (
-              <PopUpImage
-                isOpen={isImagePopupOpen}
-                data={selectedImageUrl}
-                onClose={handleClosePopup}
-              />
-            )}
           </div>
         </div>
       </div>
