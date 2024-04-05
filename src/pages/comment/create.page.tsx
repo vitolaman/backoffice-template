@@ -18,7 +18,7 @@ export const createCommentRouteName = "comment/create";
 const CreateComment = () => {
   const navigate = useNavigate();
   const [userListUpdated, setUserListUpdated] = useState<
-    { label: string; data: string }[]
+    { label: string; value: string }[]
   >([]);
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
@@ -50,9 +50,10 @@ const CreateComment = () => {
 
   useEffect(() => {
     if (UserList && UserList.length > 0) {
-      const newPromoCodeList = UserList.map((item) => ({
+      const newPromoCodeList = UserList.map((item, i) => ({
         label: `${item.name} - ${item.email}`,
-        data: item.id,
+        value: item.id,
+        key: i,
       }));
       setUserListUpdated(newPromoCodeList);
     }
@@ -76,13 +77,13 @@ const CreateComment = () => {
             </Button>
             <CancelPopUp
               isOpen={isCancelPopupOpen}
-              data={"Create Post"}
+              data={"Create Comment"}
               onClose={handleCancelPopup}
               onEdit={() => {
                 navigate(-1);
                 handleCancelPopup();
               }}
-              menu={"Banner"}
+              menu={"Comment"}
             />
             <Button
               type="button"
@@ -102,7 +103,7 @@ const CreateComment = () => {
               onEdit={() => {
                 setIsSavePopupOpen(false);
               }}
-              menu={"Banner"}
+              menu={"Comment"}
             />
           </div>
         </div>
@@ -130,9 +131,9 @@ const CreateComment = () => {
                 // }}
                 isLoading={isLoading}
                 value={userListUpdated.find((item) => {
-                  return item.data === value;
+                  return item.value === value;
                 })}
-                onChange={(e) => onChange(e?.data)}
+                onChange={(e) => onChange(e?.value)}
               />
             )}
           />

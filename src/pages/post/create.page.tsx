@@ -29,7 +29,7 @@ const CreatePost = () => {
     control,
   } = useCreatePostForm();
   const [userListUpdated, setUserListUpdated] = useState<
-    { label: string; data: string }[]
+    { label: string; value: string }[]
   >([]);
   const [totalImage, setTotalImage] = useState(1);
   const handleCounterTotalImage = (type: "add" | "remove"): void => {
@@ -72,9 +72,10 @@ const CreatePost = () => {
   };
   useEffect(() => {
     if (UserList && UserList.length > 0) {
-      const newPromoCodeList = UserList.map((item) => ({
+      const newPromoCodeList = UserList.map((item, i) => ({
         label: `${item.name} - ${item.email}`,
-        data: item.id,
+        value: item.id,
+        key: i,
       }));
       setUserListUpdated(newPromoCodeList);
     }
@@ -104,7 +105,7 @@ const CreatePost = () => {
                 navigate(-1);
                 handleCancelPopup();
               }}
-              menu={"Banner"}
+              menu={"Post"}
             />
             <Button
               type="button"
@@ -124,7 +125,7 @@ const CreatePost = () => {
               onEdit={() => {
                 setIsSavePopupOpen(false);
               }}
-              menu={"Banner"}
+              menu={"Post"}
             />
           </div>
         </div>
@@ -150,9 +151,9 @@ const CreatePost = () => {
                 // }}
                 isLoading={isLoading}
                 value={userListUpdated.find((item) => {
-                  return item.data === value;
+                  return item.value === value;
                 })}
-                onChange={(e) => onChange(e?.data)}
+                onChange={(e) => onChange(e?.value)}
               />
             )}
           />
