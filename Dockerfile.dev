@@ -1,0 +1,18 @@
+# How to build & push image
+# run script `docker build -f Dockerfile.dev --platform linux/amd64 -t registry.quadrakaryasantosa.com/spix-admin:v0.1 .`
+# run script `docker push registry.quadrakaryasantosa.com/spix-admin:v0.1`
+
+FROM node:18-alpine as builder
+WORKDIR /app
+COPY package*.json .
+COPY yarn*.lock .
+RUN yarn install
+COPY . .
+RUN yarn build:dev
+
+#Stage 2
+FROM nginx:1.19.0
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=builder /app/build .
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
