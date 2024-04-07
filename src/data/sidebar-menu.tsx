@@ -14,6 +14,10 @@ const menuItems: MenuItem[] = [
     name: "Home",
     path: "/home",
   },
+  {
+    name: "Event Calendar",
+    path: "/event-calendar",
+  },
 ];
 
 export { menuItems };
