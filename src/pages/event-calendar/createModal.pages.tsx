@@ -132,28 +132,26 @@ return (
                         <ValidationError error={errors.link}/>
                     </div>
                 </Modal.Body>
-                <Modal.Actions className='flex justify-center gap-6'>
-                    <div>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => {
-                                void handleCancelPopup();
-                            }}
-                            className="rounded-full px-6 py-2 border-red-500/80 text-red-500/80 hover:border-red-500  hover:text-red-500">
-                            Cancel
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => {
-                                void handleSavePopup();
-                            }}
-                            loading={isLoading}
-                            className="rounded-full px-6 py-2 border-[#3AC4A0]/80 text-[#3AC4A0]/80 hover:border-[#3AC4A0]  hover:text-[#3AC4A0]">
-                            Save
-                        </Button>
-                    </div>
+                <Modal.Actions className='flex justify-around'>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                            void handleCancelPopup();
+                        }}
+                        className="rounded-full px-6 py-2 border-red-500/80 text-red-500/80 hover:border-red-500  hover:text-red-500">
+                        Cancel
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                            void handleSavePopup();
+                        }}
+                        loading={isLoading}
+                        className="rounded-full px-6 py-2 border-[#3AC4A0]/80 text-[#3AC4A0]/80 hover:border-[#3AC4A0]  hover:text-[#3AC4A0]">
+                        Save
+                    </Button>
                 </Modal.Actions>
             </form>
         </Modal>

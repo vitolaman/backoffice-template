@@ -169,7 +169,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                 <ValidationError error={errors.link} />
             </div>
           </Modal.Body>
-          <Modal.Actions className='flex justify-center gap-6'>
+          <Modal.Actions className='flex justify-around'>
             <Button
               type="button"
               variant="outline"
