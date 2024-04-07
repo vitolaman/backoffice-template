@@ -2,8 +2,6 @@ import { Event } from "_interfaces/event-calendar.interfaces";
 import CancelPopUp from "components/modal/other/Cancel";
 import SavePopUp from "components/modal/other/Save";
 import ValidationError from "components/validation/error";
-import { dummyEvents } from "data/event-calendar";
-import useImagePreview from "hooks/event-calendar/useImagePreview";
 import useUpdateEventForm from "hooks/event-calendar/useUpdateEventForm";
 import { useState } from "react";
 import { Button, FileInput, Modal } from "react-daisyui";
@@ -28,8 +26,8 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
     control,
   } = useUpdateEventForm();
 
-  const image = watch("banner.image_link");
-  const imagePreview = useImagePreview(image as File);
+  const [file, setFile] = useState<File | undefined>();
+  const [preview, setPreview] = useState<string | undefined>();
 
   const handleCancelPopup = () => {
     setIsCancelPopupOpen(!isCancelPopupOpen);
@@ -38,7 +36,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
 
   const handleSavePopup = () => {
     setIsSavePopupOpen(!isSavePopupOpen);
-    reset();
+    handleUpdate();
   };
 
   const [formData, setFormData] = useState<Event>(eventData);
@@ -51,11 +49,32 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
     }));
   };
 
+  function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+    const target = e.target as HTMLInputElement & {
+        files: FileList;
+    }
+
+    const selectedFile = target.files[0];
+    
+    if (selectedFile) {
+        setFile(selectedFile);
+        
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+            const result = fileReader.result;
+            if (result) {
+                setPreview(result as string);
+            }
+        }
+        
+        fileReader.readAsDataURL(selectedFile);
+    }
+  }
 
   return (
     <div>
     <Modal backdrop={false} open={open} className="bg-white">
-      <form onSubmit={handleUpdate}>
+      <form>
         <Modal.Header>
             <h3 className="text-2xl text-[#262626] font-bold">Edit Event</h3>
         </Modal.Header>
@@ -124,19 +143,20 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
             </div>
             <div className="grid grid-cols-2 gap-5 mt-4">
                 <div className={`mb-6 w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-2`}>
-                    {imagePreview ? (
+                    {preview ? (
                     <img
                         className="flex mx-auto w-[500px] h-[166px] object-fill"
-                        src={imagePreview}
+                        src={preview}
                         alt=""
                     />
                     ) : (
                     <div className="text-[#3AC4A0]">Choose your image here</div>
                     )}
                     <FileInput
-                    {...register("banner.image_link")}
+                    {...register("banner")}
                     size="sm"
                     accept="image/*"
+                    onChange={handleOnChange}
                     />
                 </div>
             </div>

@@ -2,10 +2,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { uploadFile } from "services/modules/file";
 import { EventForm, EventFormReq } from "_interfaces/event-calendar.interfaces";
 import { useUpdateEventMutation } from "services/modules/event-calendar";
 
@@ -40,11 +38,6 @@ const useUpdateEventForm = () => {
   } = useForm<EventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
-    defaultValues: {
-      banner: {
-        image_link: "",
-      },
-    },
   });
 
   const create = async (data: EventForm) => {
@@ -53,27 +46,14 @@ const useUpdateEventForm = () => {
       const payload: EventFormReq = {
         id: data.id,
         title: data.title,
-        banner: '',
+        banner: data.banner,
         description: data.description,
         date: data.date,
         location: data.location,
         link: data.link,
         created_at: new Date().toISOString(),
       };
-
-      if (data.banner.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.banner.image_link as File
-        );
-        payload.banner = image;
-      } else {
-        payload.banner = '';
-      }
-
       await updateEvent(payload).unwrap();
-
-      console.log("created");
       reset();
     } catch (error) {
       errorHandler(error);

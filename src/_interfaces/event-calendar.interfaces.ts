@@ -33,7 +33,7 @@ export interface EventListReq {
 export interface EventForm {
     id: string;
     title: string;
-    banner: ImageUpload;
+    banner: string;
     date: string;
     description: string;
     location: string;
@@ -50,10 +50,5 @@ export interface EventFormReq {
     location: string;
     link: string;
     created_at: string;
-}
-  
-interface ImageUpload {
-    image_url: string;
-    image_link: string | File;
 }
   

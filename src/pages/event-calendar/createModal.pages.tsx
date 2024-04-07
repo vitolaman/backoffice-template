@@ -6,7 +6,6 @@ import ValidationError from 'components/validation/error';
 
 import CancelPopUp from 'components/modal/other/Cancel';
 import useCreateEventForm from '../../hooks/event-calendar/useCreateEventForm';
-import useImagePreview from 'hooks/event-calendar/useImagePreview';
 
 interface CreateModalFormProps {
   open: boolean;
@@ -28,24 +27,47 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
         control,
     } = useCreateEventForm();
 
-  
-    const image = watch("banner.image_link");
-    const imagePreview = useImagePreview(image as File);
+    const [file, setFile] = useState<File | undefined>();
+    const [preview, setPreview] = useState<string | undefined>();
+
 
     const handleCancelPopup = () => {
         setIsCancelPopupOpen(!isCancelPopupOpen);
         reset();
+        setPreview(undefined);
     };
 
     const handleSavePopup = () => {
         setIsSavePopupOpen(!isSavePopupOpen);
-        reset();
+        handleCreate();
     };
+
+    function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+        const target = e.target as HTMLInputElement & {
+            files: FileList;
+        }
+
+        const selectedFile = target.files[0];
+        
+        if (selectedFile) {
+            setFile(selectedFile);
+            
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const result = fileReader.result;
+                if (result) {
+                    setPreview(result as string);
+                }
+            }
+            
+            fileReader.readAsDataURL(selectedFile);
+        }
+    }
     
 return (
     <div>
         <Modal backdrop={false} open={open} className="bg-white">
-            <form onSubmit={handleCreate}>
+            <form>
                 <Modal.Header>
                     <h3 className="text-2xl text-[#262626] font-bold">Create Event</h3>
                 </Modal.Header>
@@ -97,16 +119,16 @@ return (
                         <div
                             className={`mb-6 w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-2`}>
                             {
-                                imagePreview
+                                preview
                                     ? (
                                         <img
                                             className="flex mx-auto w-[500px] h-[166px] object-fill"
-                                            src={imagePreview}
+                                            src={preview}
                                             alt=""/>
                                     )
                                     : (<div className="text-[#3AC4A0]">Choose your image here</div>)
                             }
-                            <FileInput {...register("banner.image_link")} size="sm" accept="image/*"/>
+                            <FileInput {...register("banner")} size="sm" accept="image/*" onChange={handleOnChange}/>
                         </div>
                     </div>
                     <div className="mb-6">
@@ -164,7 +186,6 @@ return (
                 handleCancelPopup();
                 onClose();
                 reset();
-                console.log(image);
             }}
             menu={"Create"}/>
 

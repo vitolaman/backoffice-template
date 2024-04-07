@@ -4,7 +4,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { uploadFile } from "services/modules/file";
 import { EventForm, EventFormReq } from "_interfaces/event-calendar.interfaces";
 import { useCreateEventMutation } from "services/modules/event-calendar";
 
@@ -40,12 +39,6 @@ const useCreateEventForm = () => {
   } = useForm<EventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
-    defaultValues: {
-      banner: {
-        image_link: "",
-        image_url: "",
-      },
-    },
   });
 
   const create = async (data: EventForm) => {
@@ -54,23 +47,13 @@ const useCreateEventForm = () => {
       const payload: EventFormReq = {
         id: data.id,
         title: data.title,
-        banner: '',
+        banner: data.banner,
         description: data.description,
         date: data.date,
         location: data.location,
         link: data.link,
         created_at: new Date().toISOString(),
       };
-      if (data.banner.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.banner.image_link as File
-        );
-        payload.banner = image;
-      } else {
-        payload.banner = '';
-      }
-      
       await createEvent(payload).unwrap();
       reset();
     } catch (error) {
