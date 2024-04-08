@@ -33,7 +33,7 @@ export interface EventListReq {
 export interface CreateEventForm {
     title: string;
     banner: string;
-    date: string;
+    date: string | File;
     description: string;
     location: string;
     link: string;
@@ -43,7 +43,7 @@ export interface CreateEventForm {
 export interface UpdateEventForm {
     id: string;
     title: string;
-    banner: string;
+    banner: string | File;
     date: string;
     description: string;
     location: string;

@@ -12,7 +12,7 @@ interface DeleteEventModalProps {
 
 const { success, error } = useToast();
 
-// const [deleteEvent] = useDeleteEventMutation();
+// const [deleteEventServices] = useDeleteEventMutation();
 
 const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }) => {
   const handleDelete = async () => {
