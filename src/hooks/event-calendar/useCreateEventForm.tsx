@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { EventForm, EventFormReq } from "_interfaces/event-calendar.interfaces";
+import { CreateEventForm } from "_interfaces/event-calendar.interfaces";
 import { useCreateEventMutation } from "services/modules/event-calendar";
 
 const useCreateEventForm = () => {
@@ -36,16 +36,15 @@ const useCreateEventForm = () => {
     control,
     setFocus,
     watch,
-  } = useForm<EventForm>({
+  } = useForm<CreateEventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
   });
 
-  const create = async (data: EventForm) => {
+  const create = async (data: CreateEventForm) => {
     try {
       setIsLoading(true);
-      const payload: EventFormReq = {
-        id: data.id,
+      const payload = {
         title: data.title,
         banner: data.banner,
         description: data.description,

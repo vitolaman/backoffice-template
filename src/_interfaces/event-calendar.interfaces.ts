@@ -30,8 +30,7 @@ export interface EventListReq {
     page: number;
 }
 
-export interface EventForm {
-    id: string;
+export interface CreateEventForm {
     title: string;
     banner: string;
     date: string;
@@ -41,7 +40,7 @@ export interface EventForm {
     created_at: string;
 }
   
-export interface EventFormReq {
+export interface UpdateEventForm {
     id: string;
     title: string;
     banner: string;
