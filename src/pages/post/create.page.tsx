@@ -1,9 +1,12 @@
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { CreatePostForm } from "_interfaces/post.interface";
+import { PDF } from "assets/images";
 import ContentContainer from "components/container";
 import CancelPopUp from "components/modal/other/Cancel";
 import SavePopUp from "components/modal/other/Save";
+import ImageInput from "components/post/ImageInput";
+import PDFViewer from "components/post/PDFViewer";
 import ValidationError from "components/validation/error";
 import { UserList } from "data/user";
 import useCreatePostForm from "hooks/post/useCreatePostForm";
@@ -12,13 +15,13 @@ import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
 
 export const createPostRouteName = "post/create";
 const CreatePost = () => {
   const navigate = useNavigate();
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
+  const [modalPDF, setModalPDF] = useState<boolean>(false);
   const {
     register,
     errors,
@@ -43,10 +46,12 @@ const CreatePost = () => {
   const image2 = watch("image2.image_link");
   const image3 = watch("image3.image_link");
   const image4 = watch("image4.image_link");
+  const file = watch("file");
   const [image1Preview] = useFilePreview(image1 as FileList);
   const [image2Preview] = useFilePreview(image2 as FileList);
   const [image3Preview] = useFilePreview(image3 as FileList);
   const [image4Preview] = useFilePreview(image4 as FileList);
+  const [filePreview] = useFilePreview(file as FileList);
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0] as keyof CreatePostForm;
@@ -129,7 +134,7 @@ const CreatePost = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2 mb-4">
+        {/* <div className="flex flex-col gap-2 mb-4">
           <label className="font-semibold">Publisher</label>
           <Controller
             control={control}
@@ -158,8 +163,8 @@ const CreatePost = () => {
             )}
           />
           <ValidationError error={errors.user_id} />{" "}
-        </div>
-        <div className="flex justify-between items-center">
+        </div> */}
+        <div className="flex justify-between items-center mt-10">
           <h1 className="font-semibold text-lg">Upload Photo</h1>
           <div className="flex gap-4">
             <Button
@@ -193,84 +198,62 @@ const CreatePost = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-5 mt-4">
-          <div
-            className={`w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 ${
-              totalImage === 1 ? "col-span-2" : "col-span-1"
-            }`}
-          >
-            {image1Preview ? (
-              <img
-                className="flex mx-auto w-[500px] h-[166px] object-fill"
-                src={image1Preview}
-                alt=""
-              />
-            ) : (
-              <div className="text-san-juan">Choose your image here</div>
-            )}
-            <FileInput
-              {...register("image1.image_link")}
-              size="sm"
-              accept="image/*"
-            />
-          </div>
+          <ImageInput
+            isWide={totalImage === 1}
+            imagePreview={image1Preview}
+            register={register("image1.image_link")}
+          />
           {totalImage > 1 && (
-            <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-1">
-              {image2Preview ? (
-                <img
-                  className="flex mx-auto w-[500px] h-[166px] object-fill"
-                  src={image2Preview}
-                  alt=""
-                />
-              ) : (
-                <div className="text-san-juan">Choose your image here</div>
-              )}
-              <FileInput
-                {...register("image2.image_link")}
-                size="sm"
-                accept="image/*"
-              />
-            </div>
+            <ImageInput
+              imagePreview={image2Preview}
+              register={register("image2.image_link")}
+            />
           )}
           {totalImage > 2 && (
-            <div
-              className={`w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 ${
-                totalImage === 3 ? "col-span-2" : "col-span-1"
-              }`}
-            >
-              {image3Preview ? (
-                <img
-                  className="flex mx-auto w-[500px] h-[166px] object-fill"
-                  src={image3Preview}
-                  alt=""
-                />
-              ) : (
-                <div className="text-san-juan">Choose your image here</div>
-              )}
-              <FileInput
-                {...register("image3.image_link")}
-                size="sm"
-                accept="image/*"
-              />
-            </div>
+            <ImageInput
+              isWide={totalImage === 3}
+              imagePreview={image3Preview}
+              register={register("image3.image_link")}
+            />
           )}
           {totalImage > 3 && (
-            <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-1">
-              {image4Preview ? (
-                <img
-                  className="flex mx-auto w-[500px] h-[166px] object-fill"
-                  src={image4Preview}
-                  alt=""
-                />
-              ) : (
-                <div className="text-san-juan">Choose your image here</div>
-              )}
-              <FileInput
-                {...register("image4.image_link")}
-                size="sm"
-                accept="image/*"
-              />
-            </div>
+            <ImageInput
+              imagePreview={image4Preview}
+              register={register("image4.image_link")}
+            />
           )}
+        </div>
+        <div className="flex flex-col mt-6">
+          <h1 className="font-semibold text-lg mb-4">Upload File</h1>
+          <div
+            className={`w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-2`}
+          >
+            {filePreview ? (
+              <>
+                <div
+                  onClick={() => {
+                    setModalPDF(true);
+                  }}
+                >
+                  <img src={PDF} alt="pdf" className="w-20 h-20" />
+                </div>
+                {modalPDF && (
+                  <PDFViewer
+                    file={filePreview[0]}
+                    isOpen={modalPDF}
+                    onClose={() => setModalPDF(false)}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="text-san-juan">Choose your PDF file here</div>
+            )}
+            <FileInput
+              {...register("file")}
+              size="sm"
+              accept="application/pdf"
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-2 mt-10">
           <div data-color-mode="light" className="flex flex-col gap-2">

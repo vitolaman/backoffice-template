@@ -1,6 +1,6 @@
 import { CommentListRes } from "_interfaces/comment.interface";
 
-export const data: CommentListRes = {
+export const data = {
   data: [
     {
       id: "1",

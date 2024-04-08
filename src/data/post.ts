@@ -1,6 +1,4 @@
-import { PostListRes } from "_interfaces/post.interface";
-
-export const data: PostListRes = {
+export const data = {
   data: [
     {
       id: "3aefbeec-c0d0-4ff6-84fb-06009e0d1ba3",

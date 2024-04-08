@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
     >
       <div className="pl-4 pr-2">
         <div className="w-full flex-col flex justify-center items-center gap-2 py-4">
-          <img src={imageLogo} width={80} />
+          <img src={imageLogo} width={120} />
         </div>
       </div>
 

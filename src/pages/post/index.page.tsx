@@ -13,9 +13,11 @@ import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
-import { data } from "data/post";
 import moment from "moment";
 import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
+import { PDF } from "assets/images";
+import PDFViewer from "components/post/PDFViewer";
+import { EyeIcon } from "@heroicons/react/24/outline";
 
 export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
@@ -26,14 +28,10 @@ export default function PostPage(): React.ReactElement {
     limit: 10,
     page: 1,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const { refetch } = usePostListQuery(searchParams);
-  const [deleteBanner] = useDeletePostMutation();
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
+  const [modalPDF, setModalPDF] = useState<boolean>(false);
+  const [file, setFile] = useState("");
+  const { data, isLoading, refetch } = usePostListQuery(searchParams);
+  const [deletePost] = useDeletePostMutation();
 
   const handleCreatePost = (): void => {
     void navigate("/post/create");
@@ -42,7 +40,7 @@ export default function PostPage(): React.ReactElement {
   const handleDeletePost = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
-      await deleteBanner(statusUpdated);
+      await deletePost(statusUpdated);
       refetch();
     } catch (error) {
       errorHandler(error);
@@ -55,19 +53,11 @@ export default function PostPage(): React.ReactElement {
       label: "No",
     },
     {
-      fieldId: "name",
-      label: "Publisher Name",
-      render: (data) => <p>{data?.owner.name}</p>,
-    },
-    {
       fieldId: "by_admin",
       label: "Published By",
-      render: (data) => <p>{data?.by_admin ? "Admin" : "Personal"}</p>,
-    },
-    {
-      fieldId: "owner",
-      label: "Business Sector",
-      render: (data) => <p>{data?.owner.business_sector}</p>,
+      render: (data) => (
+        <p key={data?.id}>{data?.by_admin ? "Admin" : "Personal"}</p>
+      ),
     },
     {
       fieldId: "text",
@@ -89,6 +79,27 @@ export default function PostPage(): React.ReactElement {
     {
       fieldId: "likes",
       label: "Total Like",
+    },
+    {
+      fieldId: "file",
+      label: "Document",
+      render: (data) => (
+        <div>
+          {data?.file === null ? (
+            <p>-----</p>
+          ) : (
+            <Button
+              onClick={() => {
+                setModalPDF(true);
+                setFile(data?.file as string);
+              }}
+              className="rounded hover:bg-transparent w-full h-full border-none relative z-50 text-center flex justify-center items-center"
+            >
+              <img src={PDF} alt="pdf" className="w-6 h-6 absolute z-50" />
+            </Button>
+          )}
+        </div>
+      ),
     },
     {
       fieldId: "id",
@@ -127,6 +138,21 @@ export default function PostPage(): React.ReactElement {
                   Delete Post
                 </label>
               </MenuItem>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  navigate(`/post/${data?.id}`);
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                >
+                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
+                  See Detail
+                </label>
+              </MenuItem>
             </MenuList>
           </Menu>
         </>
@@ -140,6 +166,11 @@ export default function PostPage(): React.ReactElement {
 
   return (
     <div className="max-w-7xl mx-auto">
+      <PDFViewer
+        file={file as string}
+        isOpen={modalPDF}
+        onClose={() => setModalPDF(false)}
+      />
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
           <div className="flex items-center justify-between gap-4">
@@ -171,7 +202,6 @@ export default function PostPage(): React.ReactElement {
                     columns={header}
                     data={data?.data}
                     loading={isLoading}
-                    onRowClick={(item) => navigate(`/post/${item.id}`)}
                   />
                 </div>
               </div>
@@ -179,8 +209,8 @@ export default function PostPage(): React.ReactElement {
           </div>
           <div className="flex flex-col">
             <Pagination
-              currentPage={data!?.metadata.currentPage}
-              totalPages={data!?.metadata.totalPage}
+              currentPage={data!?.meta.currentPage}
+              totalPages={data!?.meta.totalPages}
               onPageChange={handlePageChange}
             />
           </div>

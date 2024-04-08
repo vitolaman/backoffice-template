@@ -20,10 +20,8 @@ const Login = () => {
   const handleLogin = async (data: LoginReqI) => {
     try {
       const res = await login(data).unwrap();
-      console.log(res);
-
       dispatch(saveTokenAuth(res));
-      if (data.email === "admin@gmail.com" && data.password === "Password123") {
+      if (res) {
         navigate("/post");
       }
     } catch (error) {

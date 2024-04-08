@@ -21,7 +21,6 @@ const useCreatePostForm = () => {
       .required("Post content cannot empty")
       .max(255, "Post content cannot more than 255 char")
       .min(5, "Post content cannot less than 5 char"),
-    user_id: yup.string().required("Please choose user(Post issuer)"),
   });
 
   const {
@@ -51,6 +50,7 @@ const useCreatePostForm = () => {
         image_link: "",
         image_url: "",
       },
+      file: "",
     },
   });
 
@@ -60,7 +60,7 @@ const useCreatePostForm = () => {
       const payload: CreatePostReq = {
         text: data.text,
         images: [],
-        file: data.file,
+        file: "",
         user_id: data.user_id,
         by_admin: true,
         created_at: new Date().toISOString(),
@@ -70,6 +70,8 @@ const useCreatePostForm = () => {
           accessToken!,
           data.image1.image_link[0] as File
         );
+        console.log(image);
+
         payload.images.push(image);
       } else {
         payload.images = [];
@@ -94,6 +96,12 @@ const useCreatePostForm = () => {
           data.image1.image_link[0] as File
         );
         payload.images.push(image);
+      }
+      if (data.file !== "") {
+        const file = await uploadFile(accessToken!, data.file[0] as File);
+        console.log(file);
+
+        payload.file = file;
       }
       await createPost(payload).unwrap();
       navigate(-1);

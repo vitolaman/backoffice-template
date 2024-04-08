@@ -108,7 +108,7 @@ const CreateComment = () => {
           </div>
         </div>
         <div />
-        <DetailPostCard postDetail={postData.data[0]} />
+        <DetailPostCard />
         <div className="flex flex-col gap-2">
           <label className="font-semibold">Publisher</label>
           <Controller

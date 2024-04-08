@@ -5,38 +5,35 @@ import {
   MenuItem,
   MenuList,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
-import { data } from "data/comment";
-import { data as postData } from "data/post";
 import moment from "moment";
-import { Comment, CommentListReq } from "_interfaces/comment.interface";
-import { useCommentListQuery } from "services/modules/comment";
-import { useDeletePostMutation } from "services/modules/post";
+import { Comment } from "_interfaces/comment.interface";
+import {
+  useCommentListQuery,
+  useDeleteCommentMutation,
+} from "services/modules/comment";
 import DetailPostCard from "components/post/DetailPostCard";
 
 export const detailPostRouteName = "post/:id";
 export default function DetailPostPage(): React.ReactElement {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useState<CommentListReq>({
+  const [searchParams, setSearchParams] = useState({
     limit: 10,
     page: 1,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const { refetch } = useCommentListQuery(searchParams);
-  const [deleteBanner] = useDeletePostMutation();
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
-  const postDetail = postData.data[0];
+  const { data, isLoading, refetch } = useCommentListQuery({
+    ...searchParams,
+    id: id as string,
+  });
+  const [deleteComment] = useDeleteCommentMutation();
   const handleCreateComment = (): void => {
     void navigate("/comment/create");
   };
@@ -44,7 +41,7 @@ export default function DetailPostPage(): React.ReactElement {
   const handleDeleteComment = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
-      await deleteBanner(statusUpdated);
+      await deleteComment(statusUpdated);
       refetch();
     } catch (error) {
       errorHandler(error);
@@ -55,11 +52,6 @@ export default function DetailPostPage(): React.ReactElement {
     {
       fieldId: "index",
       label: "No",
-    },
-    {
-      fieldId: "name",
-      label: "Publisher Name",
-      render: (data) => <p>{data?.issuer.name}</p>,
     },
     {
       fieldId: "text",
@@ -133,7 +125,7 @@ export default function DetailPostPage(): React.ReactElement {
           <div className="flex mb-4">
             <h3 className="text-2xl text-black font-semibold">Detail Post</h3>
           </div>
-          <DetailPostCard postDetail={postDetail} />
+          <DetailPostCard />
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-2xl text-black font-semibold">Comment List</h3>
             <div className="flex items-center justify-between gap-4 ml-4">
@@ -169,11 +161,13 @@ export default function DetailPostPage(): React.ReactElement {
             </div>
           </div>
           <div className="flex flex-col">
-            <Pagination
-              currentPage={data!?.metadata.currentPage}
-              totalPages={data!?.metadata.totalPage}
-              onPageChange={handlePageChange}
-            />
+            {data!?.metadata ? (
+              <Pagination
+                currentPage={data!?.metadata.currentPage}
+                totalPages={data!?.metadata.totalPage}
+                onPageChange={handlePageChange}
+              />
+            ) : null}
           </div>
         </div>
       </div>

@@ -6,7 +6,6 @@ export interface Comment {
   text: string;
   post_id: string;
   user_id: string;
-  issuer: User;
   created_at: string;
 }
 
@@ -18,6 +17,7 @@ export interface CommentListRes {
 export interface CommentListReq {
   page: number;
   limit: number;
+  id: string;
 }
 
 export interface CreateCommentForm {

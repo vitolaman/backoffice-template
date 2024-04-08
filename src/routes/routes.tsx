@@ -9,11 +9,7 @@ import CreateComment, {
 } from "pages/comment/create.page";
 
 const protectedRoutes: RouteObject[] = [
-  { path: "*", element: <Navigate to="/not-found" /> },
-];
-
-const publicRoutes: RouteObject[] = [
-  { path: "", element: <Login /> },
+  { path: "*", element: <Navigate to="/post" /> },
   {
     path: "",
     element: <DashboardLayout />,
@@ -25,6 +21,10 @@ const publicRoutes: RouteObject[] = [
       { path: createCommentRouteName, element: <CreateComment /> },
     ],
   },
+];
+
+const publicRoutes: RouteObject[] = [
+  { path: "", element: <Login /> },
   { path: "404", element: <div>Not Found</div> },
   { path: "*", element: <Navigate to="/" /> },
 ];

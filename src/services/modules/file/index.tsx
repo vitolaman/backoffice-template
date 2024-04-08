@@ -32,7 +32,7 @@ export const uploadFile = async (token: string, image: File) => {
     bodyFormData.append("file", image);
     bodyFormData.append("type", "OTHER_URL");
     const response = await fetch(
-      `${process.env.REACT_APP_REST_HOST}/v1/storage/cloud`,
+      `https://storage.quadrakaryasantosa.com/media`,
       {
         method: "POST",
         headers: {
@@ -43,7 +43,7 @@ export const uploadFile = async (token: string, image: File) => {
       }
     );
     const data = await response.json();
-    return data.path;
+    return data.data.filename;
   } catch (error) {
     errorHandler(error);
   }

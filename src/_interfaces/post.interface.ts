@@ -1,17 +1,3 @@
-import { Metadata } from "./pagination.interface";
-
-export interface PostList {
-  id: string;
-  text: string;
-  images: string[];
-  file: string;
-  likes: number;
-  user_id: string;
-  owner: User;
-  by_admin: boolean;
-  created_at: string;
-}
-
 export interface User {
   id: string;
   name: string;
@@ -25,7 +11,23 @@ export interface User {
 
 export interface PostListRes {
   data: PostList[];
-  metadata: Metadata;
+  meta: Metadata;
+}
+
+export interface PostList {
+  id: string;
+  text: string;
+  images: string[];
+  file: string | null;
+  likes: number;
+  by_admin: boolean;
+  created_at: string;
+}
+
+export interface Metadata {
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
 }
 
 export interface PostListReq {
@@ -40,7 +42,7 @@ export interface CreatePostForm {
   image2: ImageUpload;
   image3: ImageUpload;
   image4: ImageUpload;
-  file: string;
+  file: string | FileList;
   user_id: string;
   by_admin: boolean;
   created_at: string;
