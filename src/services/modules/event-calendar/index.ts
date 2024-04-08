@@ -1,8 +1,9 @@
 import {
-  EventFormReq,
   EventList,
   EventListReq,
   EventCalendarRes,
+  CreateEventForm,
+  UpdateEventForm,
 } from "_interfaces/event-calendar.interfaces";
 import { Api } from "services/api";
 
@@ -17,7 +18,7 @@ export const eventCalendarApi = Api.injectEndpoints({
       query: (param) => `admin-portal/v1/event-calendar/${param.id}`,
       keepUnusedDataFor: 0,
     }),
-    CreateEvent: build.mutation<string, EventFormReq>({
+    CreateEvent: build.mutation<string, CreateEventForm>({
       query(body) {
         return {
           url: `/admin-portal/v1/event-calendar/create`,
@@ -28,7 +29,7 @@ export const eventCalendarApi = Api.injectEndpoints({
         };
       },
     }),
-    UpdateEvent: build.mutation<string, { id: string }>({
+    UpdateEvent: build.mutation<string, UpdateEventForm>({
       query(body) {
         return {
           url: `admin-portal/v1/event-calendar/${body.id}`,
