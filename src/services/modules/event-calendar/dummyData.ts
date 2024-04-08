@@ -1,6 +1,7 @@
-import { EventForm, EventFormReq } from "_interfaces/event-calendar.interfaces";
+import { CreateEventForm } from "_interfaces/event-calendar.interfaces";
 import { Event, EventList, EventListReq } from "../../../_interfaces/event-calendar.interfaces";
 import { dummyEvents } from "../../../data/event-calendar";
+import { useUpdateEventMutation } from ".";
 
 
 export const searchEvents = async (searchParams: EventListReq): Promise<EventList> => {
@@ -27,30 +28,7 @@ const fetchAllEvents = async (): Promise<EventList> => {
   
 const fetchEventById = async (id: string): Promise<Event | undefined> => {
     return dummyEvents.data.find(event => event.id === id);
-};
-  
-const createEvent = async (event: EventFormReq): Promise<void> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        dummyEvents.data.push(event);
-        resolve();
-      }, 500);
-    });
-};
-  
-const updateEvent = async (event: Event): Promise<void> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const index = dummyEvents.data.findIndex((e) => e.id === event.id);
-        console.log(index);
-        if (index !== -1) {
-          dummyEvents.data[index] = event;
-        }
-        resolve();
-      }, 500);
-    });
-};
-  
+};  
   
 const deleteEvent = async (id: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -64,4 +42,4 @@ const deleteEvent = async (id: string): Promise<void> => {
     });
 };
 
-export { fetchAllEvents, fetchEventById, createEvent, updateEvent, deleteEvent };
+export { fetchAllEvents, fetchEventById, deleteEvent };
