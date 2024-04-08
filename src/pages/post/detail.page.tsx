@@ -5,63 +5,57 @@ import {
   MenuItem,
   MenuList,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
-import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
 import moment from "moment";
-import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
-import { PDF } from "assets/images";
-import PDFViewer from "components/post/PDFViewer";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { Comment } from "_interfaces/comment.interface";
+import {
+  useCommentListQuery,
+  useDeleteCommentMutation,
+} from "services/modules/comment";
+import DetailPostCard from "components/post/DetailPostCard";
 
-export const postRouteName = "post";
-export default function PostPage(): React.ReactElement {
+export const detailPostRouteName = "post/:id";
+export default function DetailPostPage(): React.ReactElement {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useState<PostListReq>({
-    search: "",
+  const [searchParams, setSearchParams] = useState({
     limit: 10,
     page: 1,
   });
-  const [modalPDF, setModalPDF] = useState<boolean>(false);
-  const [file, setFile] = useState("");
-  const { data, isLoading, refetch } = usePostListQuery(searchParams);
-  const [deletePost] = useDeletePostMutation();
-
-  const handleCreatePost = (): void => {
-    void navigate("/post/create");
+  const { data, isLoading, refetch } = useCommentListQuery({
+    ...searchParams,
+    id: id as string,
+  });
+  const [deleteComment] = useDeleteCommentMutation();
+  const handleCreateComment = (): void => {
+    void navigate("/comment/create");
   };
 
-  const handleDeletePost = async (id: string): Promise<void> => {
+  const handleDeleteComment = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
-      await deletePost(statusUpdated);
+      await deleteComment(statusUpdated);
       refetch();
     } catch (error) {
       errorHandler(error);
     }
   };
 
-  const header: Columns<PostList>[] = [
+  const header: Columns<Comment>[] = [
     {
       fieldId: "index",
       label: "No",
     },
     {
-      fieldId: "by_admin",
-      label: "Published By",
-      render: (data) => (
-        <p key={data?.id}>{data?.by_admin ? "Admin" : "Personal"}</p>
-      ),
-    },
-    {
       fieldId: "text",
-      label: "Post Content",
+      label: "Comment",
       render: (data) => (
         <p>
           {data?.text !== undefined &&
@@ -75,31 +69,6 @@ export default function PostPage(): React.ReactElement {
       fieldId: "owner",
       label: "Posted At",
       render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,
-    },
-    {
-      fieldId: "likes",
-      label: "Total Like",
-    },
-    {
-      fieldId: "file",
-      label: "Document",
-      render: (data) => (
-        <div>
-          {data?.file === null ? (
-            <p>-----</p>
-          ) : (
-            <Button
-              onClick={() => {
-                setModalPDF(true);
-                setFile(data?.file as string);
-              }}
-              className="rounded hover:bg-transparent w-full h-full border-none relative z-50 text-center flex justify-center items-center"
-            >
-              <img src={PDF} alt="pdf" className="w-6 h-6 absolute z-50" />
-            </Button>
-          )}
-        </div>
-      ),
     },
     {
       fieldId: "id",
@@ -127,7 +96,7 @@ export default function PostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeletePost(data?.id as string);
+                  void handleDeleteComment(data?.id as string);
                 }}
               >
                 <label
@@ -135,22 +104,7 @@ export default function PostPage(): React.ReactElement {
                   className="flex cursor-pointer items-center gap-2 p-2 text-red-800 hover:bg-gray-100"
                 >
                   <MdDeleteOutline className="mt-1 me-3 h-4 w-4" />
-                  Delete Post
-                </label>
-              </MenuItem>
-              <MenuItem
-                placeholder={""}
-                className="p-0"
-                onClick={() => {
-                  navigate(`/post/${data?.id}`);
-                }}
-              >
-                <label
-                  htmlFor="item-1"
-                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
-                >
-                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
-                  See Detail
+                  Delete Comment
                 </label>
               </MenuItem>
             </MenuList>
@@ -166,15 +120,14 @@ export default function PostPage(): React.ReactElement {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <PDFViewer
-        file={file as string}
-        isOpen={modalPDF}
-        onClose={() => setModalPDF(false)}
-      />
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
+          <div className="flex mb-4">
+            <h3 className="text-2xl text-black font-semibold">Detail Post</h3>
+          </div>
+          <DetailPostCard />
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-2xl text-[#262626] font-semibold">Post List</h3>
+            <h3 className="text-2xl text-black font-semibold">Comment List</h3>
             <div className="flex items-center justify-between gap-4 ml-4">
               <SearchInput
                 placeholder="Search"
@@ -184,11 +137,11 @@ export default function PostPage(): React.ReactElement {
               />
               <Button
                 onClick={() => {
-                  handleCreatePost();
+                  handleCreateComment();
                 }}
                 className="bg-san-juan text-white hover:bg-san-juan/90"
               >
-                Create Post
+                Create Comment
               </Button>
             </div>
           </div>
@@ -198,7 +151,7 @@ export default function PostPage(): React.ReactElement {
             <div className="overflow-x-auto">
               <div className="align-middle inline-block min-w-full">
                 <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
-                  <Table<PostList>
+                  <Table<Comment>
                     columns={header}
                     data={data?.data}
                     loading={isLoading}
@@ -208,11 +161,13 @@ export default function PostPage(): React.ReactElement {
             </div>
           </div>
           <div className="flex flex-col">
-            <Pagination
-              currentPage={data!?.meta.currentPage}
-              totalPages={data!?.meta.totalPages}
-              onPageChange={handlePageChange}
-            />
+            {data!?.metadata ? (
+              <Pagination
+                currentPage={data!?.metadata.currentPage}
+                totalPages={data!?.metadata.totalPage}
+                onPageChange={handlePageChange}
+              />
+            ) : null}
           </div>
         </div>
       </div>

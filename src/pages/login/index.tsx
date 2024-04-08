@@ -19,9 +19,9 @@ const Login = () => {
   const navigate = useNavigate();
   const handleLogin = async (data: LoginReqI) => {
     try {
-      // const res = await login(data).unwrap();
-      // dispatch(saveTokenAuth(res));
-      if (data.email === "admin@gmail.com" && data.password === "Password123") {
+      const res = await login(data).unwrap();
+      dispatch(saveTokenAuth(res));
+      if (res) {
         navigate("/post");
       }
     } catch (error) {
@@ -31,11 +31,11 @@ const Login = () => {
 
   return (
     <div>
-      <div className="bg-[#27A590] flex flex-col w-screen h-screen overflow-hidden">
+      <div className="bg-spix-300 flex flex-col w-screen h-screen overflow-hidden">
         <div className="w-[906px] h-[906px] relative mx-auto">
           <img
             src={Logo}
-            className="absolute z-50 w-[120px] h-[45px] left-0 right-0 top-[10vh] mx-auto"
+            className="absolute z-50 w-[200px] h-[45px] left-0 right-0 top-[10vh] mx-auto"
             alt=""
           />
           <div className="bg-white formLogin w-[450px] h-[424px] absolute mx-auto left-0 right-0 rounded-xl shadow-xl top-[22vh] z-[100]">

@@ -4,8 +4,18 @@ export interface LoginReqI {
 }
 
 export interface LoginResI {
-  accessToken: string;
-  expiresAt: number;
+  data: {
+    user: AuthUser;
+    token: string;
+  };
+  success: boolean;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateBranchReqI {

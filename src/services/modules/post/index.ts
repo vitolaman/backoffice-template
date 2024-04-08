@@ -1,38 +1,26 @@
 import {
-  BannerList,
-  ChangeStatusBannerReq,
-  CreateBannerReq,
-  MainBannerReq,
-  MainBannerRes,
+  CreatePostReq,
+  PostList,
+  PostListReq,
+  PostListRes,
 } from "_interfaces/post.interface";
 import { Api } from "services/api";
 
 export const postApi = Api.injectEndpoints({
   endpoints: (build) => ({
-    BannerList: build.query<MainBannerRes, MainBannerReq>({
+    PostList: build.query<PostListRes, PostListReq>({
       query: (param) =>
-        `admin-portal/v1/banner?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
+        `post/post/admin?search=${param.search}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    BannerDetail: build.query<BannerList, { id: string }>({
-      query: (param) => `admin-portal/v1/banner/${param.id}`,
+    PostDetail: build.query<{ data: PostList }, { id: string }>({
+      query: (param) => `post/post/admin/${param.id}`,
       keepUnusedDataFor: 0,
     }),
-    changeStatusBanner: build.mutation<string, ChangeStatusBannerReq>({
+    DeletePost: build.mutation<string, { id: string }>({
       query(body) {
         return {
-          url: `admin-portal/v1/banner/${body.id}/status`,
-          method: "PATCH",
-          body: {
-            ...body,
-          },
-        };
-      },
-    }),
-    deleteBanner: build.mutation<string, { id: string }>({
-      query(body) {
-        return {
-          url: `admin-portal/v1/banner/${body.id}`,
+          url: `post/post/admin/${body.id}`,
           method: "DELETE",
           body: {
             ...body,
@@ -40,21 +28,10 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
-    updateBanner: build.mutation<string, { id: string; body: CreateBannerReq }>(
-      {
-        query({ id, body }) {
-          return {
-            url: `admin-portal/v1/banner/${id}`,
-            method: "PATCH",
-            body,
-          };
-        },
-      }
-    ),
-    createBanner: build.mutation<string, CreateBannerReq>({
+    CreatePost: build.mutation<string, CreatePostReq>({
       query(body) {
         return {
-          url: `/admin-portal/v1/banner/create`,
+          url: `post/post/admin`,
           method: "POST",
           body: {
             ...body,
@@ -67,10 +44,8 @@ export const postApi = Api.injectEndpoints({
 });
 
 export const {
-  useBannerListQuery,
-  useChangeStatusBannerMutation,
-  useCreateBannerMutation,
-  useDeleteBannerMutation,
-  useBannerDetailQuery,
-  useUpdateBannerMutation,
+  useCreatePostMutation,
+  useDeletePostMutation,
+  usePostDetailQuery,
+  usePostListQuery,
 } = postApi;

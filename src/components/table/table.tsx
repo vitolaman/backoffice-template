@@ -43,13 +43,13 @@ export function Table<T>({
   };
   return (
     <table className="min-w-full">
-      <thead className="bg-[#DCFCE4]">
+      <thead className="bg-san-juan">
         <tr className="divide-x divide-[#BDBDBD]">
           {columns.map((column, index) => (
             <th
               key={index}
               scope="col"
-              className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
+              className="p-4 text-center whitespace-nowrap text-sm font-semibold text-san-juan-50"
             >
               <div className="flex">
                 {column.label}
@@ -77,7 +77,7 @@ export function Table<T>({
                     : ""
                   : "",
                 "divide-x divide-[#BDBDBD]",
-                action ? "hover:bg-gray-200 cursor-pointer" : ""
+                onRowClick ? "hover:bg-gray-200 cursor-pointer" : ""
               )}
               onClick={(): void => {
                 handleRowClick(data);
