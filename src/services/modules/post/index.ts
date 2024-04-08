@@ -10,17 +10,17 @@ export const postApi = Api.injectEndpoints({
   endpoints: (build) => ({
     PostList: build.query<PostListRes, PostListReq>({
       query: (param) =>
-        `admin-portal/v1/banner?search=${param.search}&limit=${param.limit}&page=${param.page}`,
+        `post/admin?search=${param.search}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
     PostDetail: build.query<PostList, { id: string }>({
-      query: (param) => `admin-portal/v1/banner/${param.id}`,
+      query: (param) => `post/admin/${param.id}`,
       keepUnusedDataFor: 0,
     }),
     DeletePost: build.mutation<string, { id: string }>({
       query(body) {
         return {
-          url: `admin-portal/v1/banner/${body.id}`,
+          url: `post/admin/${body.id}`,
           method: "DELETE",
           body: {
             ...body,
@@ -31,7 +31,7 @@ export const postApi = Api.injectEndpoints({
     CreatePost: build.mutation<string, CreatePostReq>({
       query(body) {
         return {
-          url: `/admin-portal/v1/banner/create`,
+          url: `/post/admin`,
           method: "POST",
           body: {
             ...body,

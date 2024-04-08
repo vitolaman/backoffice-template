@@ -10,7 +10,7 @@ export const fileApi = Api.injectEndpoints({
         bodyFormData.append("type", "OTHER_URL");
 
         return {
-          url: "/v1/storage/cloud",
+          url: "https://storage.quadrakaryasantosa.com/media",
           headers: {
             "Content-Type": "multipart/form-data;",
           },
@@ -40,7 +40,7 @@ export const uploadFile = async (token: string, image: File) => {
           Authorization: `Bearer ${token}`,
         },
         body: bodyFormData,
-      },
+      }
     );
     const data = await response.json();
     return data.path;
@@ -61,6 +61,6 @@ export const uploadQuizQuestions = async (token: string, file: File) => {
         Authorization: `Bearer ${token}`,
       },
       body: bodyFormData,
-    },
+    }
   );
 };

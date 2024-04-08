@@ -7,7 +7,7 @@ import { useNavigate, useRoutes } from "react-router-dom";
 import { deleteTokenAuth } from "store/auth";
 
 const AppRoutes = () => {
-  const { accessToken, expiresAt } = useAppSelector((state) => state.auth);
+  const { accessToken } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -16,18 +16,12 @@ const AppRoutes = () => {
     dispatch(deleteTokenAuth());
   };
 
-  // useEffect(() => {
-  //   if (expiresAt && accessToken) {
-  //     const now = moment();
-  //     const exp = moment(expiresAt);
-  //     console.log(now, exp);
-  //     if (exp.isBefore(now)) {
-  //       loggingOut();
-  //     }
-  //   } else {
-  //     loggingOut();
-  //   }
-  // }, [expiresAt, accessToken]);
+  useEffect(() => {
+    if (!accessToken) {
+      loggingOut();
+      navigate("/");
+    }
+  }, [accessToken]);
 
   const permittedRoutes = accessToken ? protectedRoutes : publicRoutes;
   const element = useRoutes(permittedRoutes);

@@ -167,7 +167,8 @@ const CreatePost = () => {
                 handleCounterTotalImage("remove");
               }}
               disabled={totalImage === 1}
-              className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90 disabled:bg-neutral-400 disabled:text-white disabled:cursor-not-allowed"
+              type="button"
+              className="bg-san-juan text-white hover:bg-san-juan/90 disabled:bg-neutral-400 disabled:text-white disabled:cursor-not-allowed"
             >
               Remove
               <MinusIcon
@@ -180,7 +181,8 @@ const CreatePost = () => {
                 handleCounterTotalImage("add");
               }}
               disabled={totalImage === 4}
-              className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90 disabled:bg-neutral-400 disabled:text-white disabled:cursor-not-allowed"
+              type="button"
+              className="bg-san-juan text-white hover:bg-san-juan/90 disabled:bg-neutral-400 disabled:text-white disabled:cursor-not-allowed"
             >
               Add
               <PlusIcon
@@ -203,7 +205,7 @@ const CreatePost = () => {
                 alt=""
               />
             ) : (
-              <div className="text-[#3AC4A0]">Choose your image here</div>
+              <div className="text-san-juan">Choose your image here</div>
             )}
             <FileInput
               {...register("image1.image_link")}
@@ -220,7 +222,7 @@ const CreatePost = () => {
                   alt=""
                 />
               ) : (
-                <div className="text-[#3AC4A0]">Choose your image here</div>
+                <div className="text-san-juan">Choose your image here</div>
               )}
               <FileInput
                 {...register("image2.image_link")}
@@ -242,7 +244,7 @@ const CreatePost = () => {
                   alt=""
                 />
               ) : (
-                <div className="text-[#3AC4A0]">Choose your image here</div>
+                <div className="text-san-juan">Choose your image here</div>
               )}
               <FileInput
                 {...register("image3.image_link")}
@@ -260,7 +262,7 @@ const CreatePost = () => {
                   alt=""
                 />
               ) : (
-                <div className="text-[#3AC4A0]">Choose your image here</div>
+                <div className="text-san-juan">Choose your image here</div>
               )}
               <FileInput
                 {...register("image4.image_link")}
