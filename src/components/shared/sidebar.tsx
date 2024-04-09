@@ -32,11 +32,7 @@ const LogoutModal: ForwardRefRenderFunction<
 > = ({ handleClose, handleLogout }, ref) => {
   return (
     <div className="font-sans">
-      <Modal
-        backdrop={true}
-        ref={ref}
-        className="bg-white"
-      >
+      <Modal backdrop={true} ref={ref} className="bg-white">
         <Modal.Header className="font-bold">
           Are you sure want to log out?
         </Modal.Header>
@@ -44,10 +40,7 @@ const LogoutModal: ForwardRefRenderFunction<
           Press ESC key or click the button below to close
         </Modal.Body>
         <Modal.Actions>
-          <Button
-            onClick={handleLogout}
-            className="text-white bg-red-500"
-          >
+          <Button onClick={handleLogout} className="text-white bg-red-500">
             Yes, sure
           </Button>
           <Button onClick={handleClose}>Close</Button>
@@ -79,16 +72,13 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
 
   return (
     <aside
-      className={`z-[999] max-h-screen h-screen overflow-auto relative top-0 bg-persian-green transition-all ${
+      className={`z-[999] max-h-screen h-screen overflow-auto relative top-0 bg-san-juan transition-all ${
         active ? "left-0 w-[20%]" : "-left-[20%] w-[0%]"
       }`}
     >
       <div className="pl-4 pr-2">
         <div className="w-full flex-col flex justify-center items-center gap-2 py-4">
-          <img
-            src={imageLogo}
-            width={80}
-          />
+          <img src={imageLogo} width={120} />
         </div>
       </div>
 
@@ -101,7 +91,9 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
                   key={index}
                   to={item.path}
                   className={({ isActive }) =>
-                    (isActive && item.path !== "#") ? "bg-spix rounded-xl" : "rounded-xl"
+                    isActive && item.path !== "#"
+                      ? "bg-san-juan-700 rounded-xl"
+                      : "rounded-xl"
                   }
                   onClick={() => {
                     if (item.child) {
@@ -127,8 +119,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
                         <NavLink
                           key={i}
                           to={child.path}
-                          className={({ isActive }) =>{
-                            return isActive ? "bg-spix rounded-xl" : "rounded-xl"
+                          className={({ isActive }) => {
+                            return isActive
+                              ? "bg-spix rounded-xl"
+                              : "rounded-xl";
                           }}
                         >
                           <li className="hover:bg-spix hover:bg-opacity-20 transition-all duration-100 p-4 cursor-pointer ml-2 rounded-l-full text-white">

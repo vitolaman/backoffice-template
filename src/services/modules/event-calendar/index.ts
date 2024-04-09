@@ -1,9 +1,11 @@
 import {
+  Event,
   EventList,
   EventListReq,
   EventCalendarRes,
   CreateEventForm,
   UpdateEventForm,
+  EventDetailRes
 } from "_interfaces/event-calendar.interfaces";
 import { Api } from "services/api";
 
@@ -11,17 +13,17 @@ export const eventCalendarApi = Api.injectEndpoints({
   endpoints: (build) => ({
     EventList: build.query<EventCalendarRes, EventListReq>({
       query: (param) =>
-        `admin-portal/v1/event-calendar?search=${param.search}&limit=${param.limit}&page=${param.page}`,
+        `event/?page=${param.page}&limit=${param.limit}&search=${param.search}`,
       keepUnusedDataFor: 0,
     }),
-    EventDetail: build.query<EventList, { id: string }>({
-      query: (param) => `admin-portal/v1/event-calendar/${param.id}`,
+    EventDetail: build.query<EventDetailRes, { id: string }>({
+      query: (param) => `event/${param.id}`,
       keepUnusedDataFor: 0,
     }),
     CreateEvent: build.mutation<string, CreateEventForm>({
       query(body) {
         return {
-          url: `/admin-portal/v1/event-calendar/create`,
+          url: `event`,
           method: "POST",
           body: {
             ...body,
@@ -29,21 +31,32 @@ export const eventCalendarApi = Api.injectEndpoints({
         };
       },
     }),
+    // UpdateEvent: build.mutation<string, UpdateEventForm>({
+    //   query(body) {
+    //     return {
+    //       url: `event/${body.id}`,
+    //       method: "PUT",
+    //       body: {
+    //         ...body,
+    //       },
+    //     };
+    //   },
+    // }),
     UpdateEvent: build.mutation<string, UpdateEventForm>({
       query(body) {
+        const { id, ...formData } = body;
         return {
-          url: `admin-portal/v1/event-calendar/${body.id}`,
+          url: `event/${id}`,
           method: "PUT",
-          body: {
-            ...body,
-          },
+          body: formData,
         };
       },
     }),
+    
     DeleteEvent: build.mutation<string, { id: string }>({
       query(body) {
         return {
-          url: `admin-portal/v1/event-calendar/${body.id}`,
+          url: `event/${body.id}`,
           method: "DELETE",
           body: {
             ...body,

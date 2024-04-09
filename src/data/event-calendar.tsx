@@ -33,10 +33,9 @@ export const dummyEvents: EventCalendarRes = {
       created_at: '2024-04-10T11:00:00Z',
     },
   ],
-  metadata: {
+  meta: {
     currentPage: 1,
     limit: 10,
     totalPage: 10,
-    totalRow: 100,
   },
 };

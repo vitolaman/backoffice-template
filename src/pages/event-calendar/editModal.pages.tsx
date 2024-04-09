@@ -1,18 +1,22 @@
-import { Event } from "_interfaces/event-calendar.interfaces";
+import { UpdateEventReq } from "_interfaces/event-calendar.interfaces";
 import CancelPopUp from "components/modal/other/Cancel";
 import SavePopUp from "components/modal/other/Save";
 import ValidationError from "components/validation/error";
 import useUpdateEventForm from "hooks/event-calendar/useUpdateEventForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, FileInput, Modal } from "react-daisyui";
+import { useEventDetailQuery } from "services/modules/event-calendar";
 
 interface UpdateModalProps {
     open: boolean;
     onClose: () => void;
-    eventData: Event;
+    id: string;
   }
 
-const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventData }) => {
+const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) => {
+  const { data } = useEventDetailQuery({ id: id as string });
+
+  const [isLoading, setIsLoading] = useState(false);
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
   const {
@@ -20,7 +24,6 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
     errors,
     reset,
     setFocus,
-    isLoading,
     watch,
     handleUpdate,
     control,
@@ -32,24 +35,35 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
   const handleCancelPopup = () => {
     setIsCancelPopupOpen(!isCancelPopupOpen);
     reset();
+    setPreview(undefined);
   };
 
   const handleSavePopup = () => {
-    setIsSavePopupOpen(!isSavePopupOpen);
     handleUpdate();
+    setIsSavePopupOpen(!isSavePopupOpen);
+    setPreview(undefined);
   };
 
-  const [formData, setFormData] = useState<Event>(eventData);
+  // const [formData, setFormData] = useState<UpdateEventReq>();
+
+  const [formData, setFormData] = useState<UpdateEventReq>();
+
+  useEffect(() => {
+    if (data) {
+      setFormData(data.data);
+      setPreview(data.data.banner);
+    }
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value,
+    setFormData(prevData => ({
+      ...prevData!,
+      [name]: value
     }));
   };
 
-  function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+  function handleOnChange(e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const target = e.target as HTMLInputElement & {
         files: FileList;
     }
@@ -74,7 +88,8 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
   return (
     <div>
     <Modal backdrop={false} open={open} className="bg-white">
-      <form>
+    {formData &&
+      <form onSubmit={handleUpdate}>
         <Modal.Header>
             <h3 className="text-2xl text-[#262626] font-bold">Edit Event</h3>
         </Modal.Header>
@@ -86,9 +101,10 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                 <input
                     type="text"
                     id="id"
-                    value={eventData.id}
+                    value={formData?.id}
                     {...register('id')}
                     className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                    readOnly
                 />
             </div>
             <div className="mb-6">
@@ -98,7 +114,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                 <input
                     type="text"
                     id="title"
-                    value={eventData.title}
+                    value={formData?.title}
                     {...register('title')}
                     onChange={handleChange}
                     className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -112,7 +128,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                     <textarea
                         id="description"
                         {...register('description')}
-                        value={eventData.description}
+                        value={formData?.description}
                         onChange={handleChange}
                         rows={4}
                         cols={50}
@@ -134,7 +150,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                 <input
                     type="date"
                     id="date"
-                    value={eventData.date}
+                    value={formData?.date ? new Date(formData.date).toISOString().split('T')[0] : ''}
                     {...register('date')}
                     onChange={handleChange}
                     className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -146,11 +162,11 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                     {preview ? (
                     <img
                         className="flex mx-auto w-[500px] h-[166px] object-fill"
-                        src={preview}
+                        src={preview || data?.data.banner}
                         alt=""
                     />
                     ) : (
-                    <div className="text-[#3AC4A0]">Choose your image here</div>
+                    <div className="text-san-juan">Choose your image here</div>
                     )}
                     <FileInput
                     {...register("banner")}
@@ -167,27 +183,27 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
                 <input
                     type="text"
                     id="location"
-                    value={eventData.location}
+                    value={formData?.location}
                     {...register('location')}
                     onChange={handleChange}
                     className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 <ValidationError error={errors.location} />
             </div>
-            <div className="mb-6">
+            {/* <div className="mb-6">
                 <label htmlFor="link" className="block font-semibold mb-4">
                 Link
                 </label>
                 <input
                     type="text"
                     id="link"
-                    value={eventData.link}
+                    value={eventData!.link}
                     {...register('link')}
                     onChange={handleChange}
                     className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 <ValidationError error={errors.link} />
-            </div>
+            </div> */}
           </Modal.Body>
           <Modal.Actions className='flex justify-around'>
             <Button
@@ -201,18 +217,16 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
               Cancel
             </Button>
             <Button
-              type="button"
+              type="submit"
               variant="outline"
-              onClick={() => {
-                void handleSavePopup();
-              }}
               loading={isLoading}
-              className="rounded-full px-6 py-2 border-[#3AC4A0]/80 text-[#3AC4A0]/80 hover:border-[#3AC4A0]  hover:text-[#3AC4A0]"
+              className="rounded-full px-6 py-2 border-san-juan/80 text-san-juan/80 hover:bg-san-juan  hover:text-white"
             >
               Save
             </Button>
           </Modal.Actions>
       </form>
+}
     </Modal>
     
     <CancelPopUp
@@ -226,7 +240,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
         menu={"Update"}
     />
             
-    <SavePopUp
+    {/* <SavePopUp
         isOpen={isSavePopupOpen}
         data={"Update"}
         onClose={handleSavePopup}
@@ -234,7 +248,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, eventDat
         setIsSavePopupOpen(false);
         }}
         menu={"Event"}
-    />
+    /> */}
     </div>
   );
 };

@@ -4,8 +4,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { UpdateEventForm } from "_interfaces/event-calendar.interfaces";
+import { UpdateEventForm, UpdateEventReq } from "_interfaces/event-calendar.interfaces";
 import { useUpdateEventMutation } from "services/modules/event-calendar";
+import { uploadFile } from "services/modules/file";
 
 const useUpdateEventForm = () => {
   const [updateEvent] = useUpdateEventMutation();
@@ -24,7 +25,6 @@ const useUpdateEventForm = () => {
         .min(10, "Description cannot less than 10 char"),
     date: yup.string().required('Date is required'),
     location: yup.string().required('Location is required'),
-    link: yup.string().required('Link is required'),
   });
 
   const {
@@ -43,16 +43,27 @@ const useUpdateEventForm = () => {
   const update = async (data: UpdateEventForm) => {
     try {
       setIsLoading(true);
-      const payload = {
+      const payload : UpdateEventReq = {
         id: data.id,
         title: data.title,
-        banner: data.banner,
+        banner: '',
         description: data.description,
         date: data.date,
         location: data.location,
-        link: data.link,
-        created_at: new Date().toISOString(),
       };
+      
+      console.log(payload);
+      if (data.banner !== "") {
+        console.log(data.banner[0]);
+        const image = await uploadFile(
+          accessToken!,
+          data.banner[0] as File
+        );
+        payload.banner = image;
+      } else {
+        payload.banner = data.banner;
+      }
+      console.log(payload);
       await updateEvent(payload).unwrap();
       reset();
     } catch (error) {

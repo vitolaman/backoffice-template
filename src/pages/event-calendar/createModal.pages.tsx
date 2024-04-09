@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, FileInput, Modal } from 'react-daisyui';
 import SavePopUp from 'components/modal/other/Save';
-import { useToast } from '../../components/toast/toast';
 import ValidationError from 'components/validation/error';
-
 import CancelPopUp from 'components/modal/other/Cancel';
 import useCreateEventForm from '../../hooks/event-calendar/useCreateEventForm';
 
@@ -39,7 +37,8 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
 
     const handleSavePopup = () => {
         setIsSavePopupOpen(!isSavePopupOpen);
-        handleCreate();
+        // handleCreate();
+        setPreview(undefined);
     };
 
     function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
@@ -63,11 +62,17 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
             fileReader.readAsDataURL(selectedFile);
         }
     }
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault(); // Prevent the default form submission
+        // Call handleCreate function
+        handleCreate();
+    };
     
 return (
     <div>
         <Modal backdrop={false} open={open} className="bg-white">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <Modal.Header>
                     <h3 className="text-2xl text-[#262626] font-bold">Create Event</h3>
                 </Modal.Header>
@@ -126,7 +131,7 @@ return (
                                             src={preview}
                                             alt=""/>
                                     )
-                                    : (<div className="text-[#3AC4A0]">Choose your image here</div>)
+                                    : (<div className="text-san-juan">Choose your image here</div>)
                             }
                             <FileInput {...register("banner")} size="sm" accept="image/*" onChange={handleOnChange}/>
                         </div>
@@ -165,13 +170,10 @@ return (
                         Cancel
                     </Button>
                     <Button
-                        type="button"
+                        type="submit"
                         variant="outline"
-                        onClick={() => {
-                            void handleSavePopup();
-                        }}
                         loading={isLoading}
-                        className="rounded-full px-6 py-2 border-[#3AC4A0]/80 text-[#3AC4A0]/80 hover:border-[#3AC4A0]  hover:text-[#3AC4A0]">
+                        className="rounded-full px-6 py-2 border-san-juan/80 text-san-juan/80 hover:bg-san-juan hover:text-white">
                         Save
                     </Button>
                 </Modal.Actions>
@@ -189,15 +191,14 @@ return (
             }}
             menu={"Create"}/>
 
-        <SavePopUp
+        {/* <SavePopUp
             isOpen={isSavePopupOpen}
             data={"Create"}
             onClose={handleSavePopup}
             onEdit={() => {
                 setIsSavePopupOpen(false);
-                handleCreate();
             }}
-            menu={"Event"}/>
+            menu={"Event"}/> */}
     </div>
 );
 };

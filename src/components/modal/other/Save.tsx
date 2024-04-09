@@ -81,7 +81,7 @@ const SavePopUp: React.FC<ErrorPopupProps> = ({
       <Modal.Actions className="flex w-full flex-col items-center">
         <Button
           type="submit"
-          className="w-[80%] rounded-full bg-spix hover:bg-spix/90"
+          className="w-[80%] rounded-full bg-persian-green hover:bg-persian-green/90"
           onClick={onEdit}
         >
           Yes

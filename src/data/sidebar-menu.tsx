@@ -16,7 +16,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Event Calendar",
-    path: "/event-calendar",
+    path: "/event",
   },
 ];
 

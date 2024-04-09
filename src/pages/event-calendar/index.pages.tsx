@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { EventList, EventListReq, Event } from '_interfaces/event-calendar.interfaces'; 
+import { EventListReq, Event } from '_interfaces/event-calendar.interfaces'; 
 import SearchInput from 'components/search-input';
 import { Columns, Table } from "components/table/table";
 import Pagination from 'components/table/pagination';
-import { dummyEvents } from '../../data/event-calendar';
 import { Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
 import { Button } from 'react-daisyui';
 import { MdDelete, MdModeEditOutline, MdVisibility } from "react-icons/md";
@@ -11,98 +10,74 @@ import CreateModalForm from './createModal.pages';
 import UpdateEventModal from './editModal.pages';
 import DeleteEventModal from './deleteConfirmation.pages';
 import { useEventListQuery } from 'services/modules/event-calendar';
-import { fetchAllEvents, fetchEventById, searchEvents } from 'services/modules/event-calendar/dummyData';
 import DetailEventModal from './detail.pages';
+import { useNavigate } from 'react-router-dom';
+import moment from "moment";
+
 
 const EventCalendarPage: React.FC = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     
-    const [events, setEvents] = useState<EventList>(dummyEvents.data);
     const [searchParams, setSearchParams] = useState<EventListReq>({
         search: '',
         limit: 10,
         page: 1,
     });
 
-    // const { refetch } = useEventListQuery(searchParams);
+    const { data, refetch } = useEventListQuery(searchParams);
 
     useEffect(() => {
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-      }, []);
-
-    useEffect(() => {
-        const fetchEvents = async () => {
-            const searchedEvents = await searchEvents(searchParams);
-            setEvents(searchedEvents);
-        };
-        fetchEvents();
-    }, [searchParams]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setIsLoading(true);
-            const data = await fetchAllEvents();
-            setEvents(data);
-          } catch (error) {
-            console.error('Error fetching events:', error);
-          } finally {
-            setIsLoading(false);
-          }
-        };
-      
-        fetchData();
     }, []);
 
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isDeleteConfirmation, setIsDeleteConfirmation] = useState(false);
 
-    const [idEvent, setIdEvent] = useState("");
+    const [idEvent, setIdEvent] = useState('');
+    const [selectedEvent, setSelectedEvent] = useState<Event>();
 
     const closeModal = () => {
-        setIsModalOpen(false);
+        setIsCreateModalOpen(false);
+        setIsUpdateModalOpen(false);
         setIsDeleteConfirmation(false);
         setIsDetailModalOpen(false);
+        setIdEvent('');
         setSelectedEvent(undefined);
     };
     
     const openCreateModal = () => {
-        setIsModalOpen(true);
+        setIsCreateModalOpen(true);
     };
 
-    const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(undefined);
-
-    const openDetailModal = async (id: string) => {
-        try {
-            const event = await fetchEventById(id);
-            setSelectedEvent(event);
-            setIsDetailModalOpen(true);
-        } catch (error) {
-            console.error('Error fetching event:', error);
-        }
+    const openEditModal = (id: string) => {
+        setIdEvent(id);
+        setIsUpdateModalOpen(true);
     }; 
 
-    const openEditModal = async (id: string) => {
-        try {
-            const event = await fetchEventById(id);
-            setSelectedEvent(event);
-            setIsModalOpen(true);
-        } catch (error) {
-            console.error('Error fetching event:', error);
-        }
-    }; 
+    // const openDetailModal = (id: string) => {
+    //     setIdEvent(id);
+    //     console.log(idEvent);
+    //     setIsDetailModalOpen(true);
+    // };
 
+    const openDetailModal = async (id: string): Promise<void> => {
+        try {
+          await setIdEvent(id);
+          setIsDetailModalOpen(true);
+        } catch (error) {
+          console.log(error);
+        }
+      };
     
     const openDeleteModal = (id: string) => {
-        setIsDeleteConfirmation(true);
         setIdEvent(id);
+        setIsDeleteConfirmation(true);
     };
-
     
     const handlePageChange = async (page: number): Promise<void> => {
         setSearchParams({ ...searchParams, page });
@@ -121,7 +96,7 @@ const EventCalendarPage: React.FC = () => {
         {
             fieldId: "date",
             label: "Date",
-            render: (data) => <p>{data?.date.toString()}</p>,},
+            render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,},
         {
             fieldId: "location",
             label: "Location",
@@ -154,6 +129,7 @@ const EventCalendarPage: React.FC = () => {
                         className="p-0"
                         onClick={() => {
                             void openDetailModal(data?.id as string);
+                            console.log(data?.id)
                         }}
                         >
                         <label
@@ -216,7 +192,7 @@ const EventCalendarPage: React.FC = () => {
                 />
                 <button
                     onClick={openCreateModal}
-                    className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90"
+                    className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-san-juan text-white hover:bg-san-juan/90"
                 >
                     Create Event
                 </button>
@@ -230,7 +206,7 @@ const EventCalendarPage: React.FC = () => {
                     <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
                     <Table
                         columns={header}
-                        data={events}
+                        data={data?.data}
                         loading={isLoading}
                         />
                     </div>
@@ -239,8 +215,8 @@ const EventCalendarPage: React.FC = () => {
             </div>
             <div className="flex flex-col">
                 <Pagination
-                currentPage={dummyEvents!?.metadata.currentPage}
-                totalPages={dummyEvents!?.metadata.totalPage}
+                currentPage={data!?.meta.currentPage}
+                totalPages={data!?.meta.totalPage}
                 onPageChange={handlePageChange}
                 />
             </div>
@@ -250,31 +226,33 @@ const EventCalendarPage: React.FC = () => {
         </div>
 
         <CreateModalForm
-            open={isModalOpen}
-            onClose={() => closeModal()}
+            open={isCreateModalOpen}
+            onClose={closeModal}
         />
         
-        {selectedEvent && (
+        {idEvent !== '' &&
             <DetailEventModal
                 open={isDetailModalOpen}
                 onClose={closeModal}
-                eventData={selectedEvent}
+                id={idEvent}
             />
-        )}
+        }
 
-        {selectedEvent && (
+        {idEvent !== '' &&
             <UpdateEventModal
-                open={isModalOpen}
+                open={isUpdateModalOpen}
                 onClose={closeModal}
-                eventData={selectedEvent}
+                id={idEvent}
+            /> 
+        }
+
+        {idEvent !== '' &&
+            <DeleteEventModal
+                open={isDeleteConfirmation}
+                onClose={closeModal}
+                id={idEvent}
             />
-        )}
-        
-        <DeleteEventModal
-            open={isDeleteConfirmation}
-            onClose={closeModal}
-            id={idEvent}
-        />
+        }
         
         </div>
     );

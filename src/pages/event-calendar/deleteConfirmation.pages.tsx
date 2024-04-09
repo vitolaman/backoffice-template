@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-daisyui';
-import { useToast } from '../../components/toast/toast';
+import { toast } from 'react-toastify';
 import { useDeleteEventMutation } from 'services/modules/event-calendar';
-import { deleteEvent } from 'services/modules/event-calendar/dummyData';
 
 interface DeleteEventModalProps {
     open: boolean;
     onClose: () => void;
     id: string;
-  }
+}
 
-const { success, error } = useToast();
-
-// const [deleteEventServices] = useDeleteEventMutation();
 
 const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }) => {
-  const handleDelete = async () => {
+  const [deleteEventServices] = useDeleteEventMutation();
+
+  const handleDelete = async (id: string): Promise<void> => {
     try {
-      await deleteEvent(id);
-      success('Event successfully deleted');
+      // const idSelected = { id };
+      await deleteEventServices({id});
+      toast('Event successfully deleted');
       onClose();
     } catch (error) {
       console.error('Error:', error);
@@ -37,7 +36,7 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }
           </Modal.Body>
           <Modal.Actions className="flex justify-around">
             <Button onClick={onClose} className='rounded-full px-6 py-2'>Cancel</Button>
-            <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2">
+            <Button onClick={() => {void handleDelete(id)}} className="bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2">
               Delete
             </Button>
           </Modal.Actions>

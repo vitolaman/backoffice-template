@@ -1,5 +1,5 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -10,7 +10,7 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  onPageChange
+  onPageChange,
 }) => {
   const [inputPage, setInputPage] = useState<any>(currentPage);
 
@@ -63,7 +63,7 @@ const Pagination: React.FC<PaginationProps> = ({
           key={i}
           href="#"
           className={`${
-            i === currentPage ? 'text-white bg-[#3AC4A0]' : 'text-[#262626]'
+            i === currentPage ? "text-white bg-san-juan" : "text-[#262626]"
           } rounded-full w-6 h-6 mx-2 inline-flex justify-center items-center text-xs`}
           onClick={() => {
             handlePageButtonClick(i);
@@ -118,7 +118,7 @@ const Pagination: React.FC<PaginationProps> = ({
             <button
               type="button"
               onClick={handlePageChange}
-              className="inline-flex items-center px-4 h-[23px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
+              className="inline-flex items-center px-4 h-[23px] border border-transparent text-xs font-semibold rounded-full text-white bg-san-juan"
             >
               Go
             </button>

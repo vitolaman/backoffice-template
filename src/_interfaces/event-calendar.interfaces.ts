@@ -11,17 +11,15 @@ export interface Event {
 
 export type EventList = Event[];
 
-
 export interface Metadata {
     currentPage: number;
     limit: number;
     totalPage: number;
-    totalRow: number;
 }
 
 export interface EventCalendarRes {
     data: EventList;
-    metadata: Metadata;
+    meta: Metadata;
 }
 
 export interface EventListReq {
@@ -30,20 +28,19 @@ export interface EventListReq {
     page: number;
 }
 
-export interface CreateEventForm {
+export interface CreateEventReq {
     title: string;
     banner: string;
-    date: string | File;
+    date: string;
     description: string;
     location: string;
     link: string;
     created_at: string;
 }
-  
-export interface UpdateEventForm {
-    id: string;
+
+export interface CreateEventForm {
     title: string;
-    banner: string | File;
+    banner: string | FileList;
     date: string;
     description: string;
     location: string;
@@ -51,3 +48,25 @@ export interface UpdateEventForm {
     created_at: string;
 }
   
+export interface UpdateEventReq {
+    id: string;
+    title: string;
+    banner: string;
+    date: string;
+    description: string;
+    location: string;
+}
+ 
+export interface UpdateEventForm {
+    id: string;
+    title: string;
+    banner: string | FileList;
+    date: string;
+    description: string;
+    location: string;
+}
+
+export interface EventDetailRes {
+    data: Event;
+    meta: Metadata;
+}

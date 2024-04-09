@@ -15,7 +15,7 @@ const publicRoutes: RouteObject[] = [
     path: "",
     element: <DashboardLayout />,
     children: [
-      { path: "/event-calendar", element: <EventCalendarPage /> },
+      { path: "/event", element: <EventCalendarPage /> },
     ],
   },
 ];
