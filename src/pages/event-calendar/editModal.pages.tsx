@@ -172,6 +172,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
                     {...register("banner")}
                     size="sm"
                     accept="image/*"
+                    src={formData?.banner ? formData.banner : (data?.data.banner || '')}
                     onChange={handleOnChange}
                     />
                 </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-daisyui';
 import { toast } from 'react-toastify';
+import { errorHandler } from 'services/errorHandler';
 import { useDeleteEventMutation } from 'services/modules/event-calendar';
 
 interface DeleteEventModalProps {
@@ -15,13 +16,13 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }
 
   const handleDelete = async (id: string): Promise<void> => {
     try {
-      // const idSelected = { id };
       await deleteEventServices({id});
-      toast('Event successfully deleted');
       onClose();
     } catch (error) {
+      errorHandler(error);
       console.error('Error:', error);
     }
+    
   };
 
   return (
