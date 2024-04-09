@@ -17,6 +17,7 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }
   const handleDelete = async (id: string): Promise<void> => {
     try {
       await deleteEventServices({id});
+      toast.success('Event deleted successfully'); 
       onClose();
     } catch (error) {
       errorHandler(error);
@@ -37,7 +38,7 @@ const DeleteEventModal: React.FC<DeleteEventModalProps> = ({ open, onClose, id }
           </Modal.Body>
           <Modal.Actions className="flex justify-around">
             <Button onClick={onClose} className='rounded-full px-6 py-2'>Cancel</Button>
-            <Button onClick={() => {void handleDelete(id)}} className="bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2">
+            <Button onClick={() => {void handleDelete(id); onClose();}} className="bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2">
               Delete
             </Button>
           </Modal.Actions>

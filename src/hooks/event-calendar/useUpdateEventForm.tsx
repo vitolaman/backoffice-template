@@ -7,6 +7,7 @@ import { useAppSelector } from "store";
 import { UpdateEventForm, UpdateEventReq } from "_interfaces/event-calendar.interfaces";
 import { useUpdateEventMutation } from "services/modules/event-calendar";
 import { uploadFile } from "services/modules/file";
+import { toast } from "react-toastify";
 
 const useUpdateEventForm = () => {
   const [updateEvent] = useUpdateEventMutation();
@@ -35,6 +36,7 @@ const useUpdateEventForm = () => {
     control,
     setFocus,
     watch,
+    trigger,
   } = useForm<UpdateEventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -65,6 +67,7 @@ const useUpdateEventForm = () => {
       }
       console.log(payload);
       await updateEvent(payload).unwrap();
+      toast('Event updated successfully');
       reset();
     } catch (error) {
       errorHandler(error);
@@ -85,6 +88,7 @@ const handleUpdate = handleSubmit(update);
     control,
     isLoading,
     watch,
+    trigger,
   };
 };
 

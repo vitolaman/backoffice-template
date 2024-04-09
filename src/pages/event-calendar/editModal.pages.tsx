@@ -1,4 +1,4 @@
-import { UpdateEventReq } from "_interfaces/event-calendar.interfaces";
+import { UpdateEventForm, UpdateEventReq } from "_interfaces/event-calendar.interfaces";
 import CancelPopUp from "components/modal/other/Cancel";
 import SavePopUp from "components/modal/other/Save";
 import ValidationError from "components/validation/error";
@@ -27,6 +27,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
     watch,
     handleUpdate,
     control,
+    trigger
   } = useUpdateEventForm();
 
   const [file, setFile] = useState<File | undefined>();
@@ -39,7 +40,6 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
   };
 
   const handleSavePopup = () => {
-    handleUpdate();
     setIsSavePopupOpen(!isSavePopupOpen);
     setPreview(undefined);
   };
@@ -85,11 +85,39 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
     }
   }
 
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0] as keyof UpdateEventForm;
+    console.log(firstError);
+    if (firstError) {
+      setFocus(firstError);
+      const element = errors[firstError]?.ref;
+      if (element) {
+        element?.scrollIntoView?.({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      }
+    }
+  }, [errors, setFocus]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const isValid = await trigger();
+
+    if (isValid) {
+      await handleUpdate();
+      onClose();
+    } else {
+      console.log('There are validation errors in the form');
+    }
+  };
+
   return (
     <div>
     <Modal backdrop={false} open={open} className="bg-white">
     {formData &&
-      <form onSubmit={handleUpdate}>
+      <form onSubmit={handleSubmit}>
         <Modal.Header>
             <h3 className="text-2xl text-[#262626] font-bold">Edit Event</h3>
         </Modal.Header>

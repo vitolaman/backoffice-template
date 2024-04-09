@@ -4,6 +4,7 @@ import SavePopUp from 'components/modal/other/Save';
 import ValidationError from 'components/validation/error';
 import CancelPopUp from 'components/modal/other/Cancel';
 import useCreateEventForm from '../../hooks/event-calendar/useCreateEventForm';
+import { CreateEventForm } from '_interfaces/event-calendar.interfaces';
 
 interface CreateModalFormProps {
   open: boolean;
@@ -23,6 +24,7 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
         watch,
         handleCreate,
         control,
+        trigger,
     } = useCreateEventForm();
 
     const [file, setFile] = useState<File | undefined>();
@@ -63,11 +65,33 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
         }
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Prevent the default form submission
-        // Call handleCreate function
-        handleCreate();
-    };
+    useEffect(() => {
+        const firstError = Object.keys(errors)[0] as keyof CreateEventForm;
+        console.log(firstError);
+        if (firstError) {
+          setFocus(firstError);
+          const element = errors[firstError]?.ref;
+          if (element) {
+            element?.scrollIntoView?.({
+              behavior: "smooth",
+              block: "center",
+              inline: "nearest",
+            });
+          }
+        }
+      }, [errors, setFocus]);
+    
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const isValid = await trigger();
+    
+        if (isValid) {
+          await handleCreate();
+          onClose();
+        } else {
+          console.log('There are validation errors in the form');
+        }
+      };
     
 return (
     <div>
@@ -85,6 +109,7 @@ return (
                             type="text"
                             id="title"
                             {...register('title')}
+                            placeholder="Enter title..."
                             className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
                         <ValidationError error={errors.title}/>
                     </div>
@@ -127,7 +152,7 @@ return (
                                 preview
                                     ? (
                                         <img
-                                            className="flex mx-auto w-[500px] h-[166px] object-fill"
+                                            className="flex mx-auto w-[500px] h-[166px] object-cover"
                                             src={preview}
                                             alt=""/>
                                     )
@@ -136,6 +161,7 @@ return (
                             <FileInput {...register("banner")} size="sm" accept="image/*" onChange={handleOnChange}/>
                         </div>
                     </div>
+                    <ValidationError error={errors.banner}/>
                     <div className="mb-6">
                         <label htmlFor="location" className="block font-semibold mb-4">
                             Location
@@ -144,6 +170,7 @@ return (
                             type="text"
                             id="location"
                             {...register('location')}
+                            placeholder="Enter location..."
                             className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
                         <ValidationError error={errors.location}/>
                     </div>
@@ -155,6 +182,7 @@ return (
                             type="text"
                             id="link"
                             {...register('link')}
+                            placeholder="Enter link..."
                             className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
                         <ValidationError error={errors.link}/>
                     </div>

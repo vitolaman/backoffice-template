@@ -24,12 +24,12 @@ export const userApi = Api.injectEndpoints({
           browserName = "Internet Explorer";
         }
         return {
-          url: "/admin-portal/v1/login",
+          url: "/auth/admin/login",
           method: "POST",
-          body: {
-            ...body,
-            login_at: "Admin Portal",
-            login_device: browserName,
+          body,
+          headers: {
+            "Content-Type": "application/json", // Contoh menambahkan Content-Type
+            // Tambahkan header lain yang dibutuhkan server di sini
           },
         };
       },

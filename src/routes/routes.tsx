@@ -4,20 +4,21 @@ import EventCalendarPage from "pages/event-calendar/index.pages";
 import DashboardLayout from "layout/dashboard";
 
 const protectedRoutes: RouteObject[] = [
-  { path: "*", element: <Navigate to="/not-found" /> },
+  { path: "*", element: <Navigate to="/event" /> },
+  {
+    path: "",
+    element: <DashboardLayout />,
+    children: [
+      { path: "not-found", element: <>Page Not Found</> },
+      { path: "/event", element: <EventCalendarPage /> },
+    ],
+  },
 ];
 
 const publicRoutes: RouteObject[] = [
   { path: "", element: <Login /> },
   { path: "404", element: <div>Not Found</div> },
   { path: "*", element: <Navigate to="/" /> },
-  {
-    path: "",
-    element: <DashboardLayout />,
-    children: [
-      { path: "/event", element: <EventCalendarPage /> },
-    ],
-  },
 ];
 
 export { publicRoutes, protectedRoutes };

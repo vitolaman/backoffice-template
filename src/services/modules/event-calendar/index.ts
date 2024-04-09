@@ -31,17 +31,6 @@ export const eventCalendarApi = Api.injectEndpoints({
         };
       },
     }),
-    // UpdateEvent: build.mutation<string, UpdateEventForm>({
-    //   query(body) {
-    //     return {
-    //       url: `event/${body.id}`,
-    //       method: "PUT",
-    //       body: {
-    //         ...body,
-    //       },
-    //     };
-    //   },
-    // }),
     UpdateEvent: build.mutation<string, UpdateEventForm>({
       query(body) {
         const { id, ...formData } = body;

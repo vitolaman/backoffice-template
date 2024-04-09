@@ -7,6 +7,7 @@ import { useAppSelector } from "store";
 import { CreateEventForm, CreateEventReq } from "_interfaces/event-calendar.interfaces";
 import { useCreateEventMutation } from "services/modules/event-calendar";
 import { uploadFile } from "services/modules/file";
+import { toast } from "react-toastify";
 
 const useCreateEventForm = () => {
   const [createEvent] = useCreateEventMutation();
@@ -20,6 +21,7 @@ const useCreateEventForm = () => {
         .required('Title is required')
         .min(5, "Title cannot less than 5 char")
         .max(255, "Title cannot more than 255 char"),
+    banner: yup.mixed().defined().required('Image is required'),
     description: yup
         .string()
         .required('Description is required')
@@ -37,6 +39,7 @@ const useCreateEventForm = () => {
     control,
     setFocus,
     watch,
+    trigger,
   } = useForm<CreateEventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -54,7 +57,7 @@ const useCreateEventForm = () => {
         link: data.link,
         created_at: new Date().toISOString(),
       };
-      if (data.banner !== "") {
+      if (data.banner !== "" && data.banner !== undefined) {
         console.log(data.banner[0]);
         const image = await uploadFile(
           accessToken!,
@@ -62,12 +65,11 @@ const useCreateEventForm = () => {
         );
 
         payload.banner = image;
-      } else {
-        payload.banner = '';
       }
       console.log(payload);
-      // await createEvent(payload).unwrap();
+      await createEvent(payload).unwrap();
       reset();
+      toast('Event created successfully');
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -87,6 +89,7 @@ const handleCreate = handleSubmit(create);
     control,
     isLoading,
     watch,
+    trigger,
   };
 };
 

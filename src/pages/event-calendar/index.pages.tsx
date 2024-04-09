@@ -44,6 +44,7 @@ const EventCalendarPage: React.FC = () => {
     const [selectedEvent, setSelectedEvent] = useState<Event>();
 
     const closeModal = () => {
+        refetch();
         setIsCreateModalOpen(false);
         setIsUpdateModalOpen(false);
         setIsDeleteConfirmation(false);
