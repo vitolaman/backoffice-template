@@ -1,4 +1,8 @@
-import { CommentListReq, CommentListRes } from "_interfaces/comment.interface";
+import {
+  CommentListReq,
+  CommentListRes,
+  CreateCommentForm,
+} from "_interfaces/comment.interface";
 import { Api } from "services/api";
 
 export const postApi = Api.injectEndpoints({
@@ -19,10 +23,10 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
-    CreateComment: build.mutation<string, { text: string; user_id: string }>({
+    CreateComment: build.mutation<string, CreateCommentForm>({
       query(body) {
         return {
-          url: `/comment/admin/admin/create`,
+          url: `post/comment/admin`,
           method: "POST",
           body: {
             ...body,
