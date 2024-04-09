@@ -22,5 +22,5 @@ export interface CommentListReq {
 
 export interface CreateCommentForm {
   text: string;
-  user_id: string;
+  postId: string;
 }

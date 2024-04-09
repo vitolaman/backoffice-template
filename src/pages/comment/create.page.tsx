@@ -11,18 +11,18 @@ import useCreateCommentForm from "hooks/comment/useCreateCommentForm";
 import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
 import { Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const createCommentRouteName = "comment/create";
+export const createCommentRouteName = "comment/create/:id";
 const CreateComment = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [userListUpdated, setUserListUpdated] = useState<
     { label: string; value: string }[]
   >([]);
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
-  const { errors, setFocus, isLoading, handleCreate, control } =
+  const { errors, setFocus, isLoading, handleCreate, control, reset } =
     useCreateCommentForm();
 
   useEffect(() => {
@@ -39,6 +39,10 @@ const CreateComment = () => {
       }
     }
   }, [errors, setFocus]);
+
+  useEffect(() => {
+    reset((prevState) => ({ ...prevState, postId: id as string }));
+  }, [id]);
 
   const handleCancelPopup = () => {
     setIsCancelPopupOpen(!isCancelPopupOpen);
@@ -109,36 +113,6 @@ const CreateComment = () => {
         </div>
         <div />
         <DetailPostCard />
-        <div className="flex flex-col gap-2">
-          <label className="font-semibold">Publisher</label>
-          <Controller
-            control={control}
-            name="user_id"
-            render={({ field: { value, onChange } }) => (
-              <ReactSelect
-                styles={{
-                  control: (baseStyle) => ({
-                    ...baseStyle,
-                    padding: 5,
-                    borderColor: "#BDBDBD",
-                    borderRadius: "0.5rem",
-                  }),
-                }}
-                options={userListUpdated}
-                isSearchable={true}
-                // onInputChange={(e) => {
-                //   setSearch(e);
-                // }}
-                isLoading={isLoading}
-                value={userListUpdated.find((item) => {
-                  return item.value === value;
-                })}
-                onChange={(e) => onChange(e?.value)}
-              />
-            )}
-          />
-          <ValidationError error={errors.user_id} />{" "}
-        </div>
         <div className="flex flex-col gap-2 mt-10">
           <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold text-lg">Comment Content</label>

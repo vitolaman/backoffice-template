@@ -27,6 +27,7 @@ const useCreateCommentForm = () => {
     control,
     setFocus,
     watch,
+    reset,
   } = useForm<CreateCommentForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -37,7 +38,7 @@ const useCreateCommentForm = () => {
       setIsLoading(true);
       const payload = {
         text: data.text,
-        user_id: data.user_id,
+        postId: data.postId,
       };
       await createComment(payload).unwrap();
       navigate(-1);
@@ -58,6 +59,7 @@ const useCreateCommentForm = () => {
     control,
     isLoading,
     watch,
+    reset,
   };
 };
 

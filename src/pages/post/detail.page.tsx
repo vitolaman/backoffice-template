@@ -19,23 +19,30 @@ import {
   useDeleteCommentMutation,
 } from "services/modules/comment";
 import DetailPostCard from "components/post/DetailPostCard";
+import DeletePopUp from "components/modal/other/Delete";
 
 export const detailPostRouteName = "post/:id";
 export default function DetailPostPage(): React.ReactElement {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [searchParams, setSearchParams] = useState({
     limit: 10,
     page: 1,
   });
+  const [selectedComment, setSelectedComment] = useState<string>("");
+
   const { data, isLoading, refetch } = useCommentListQuery({
     ...searchParams,
     id: id as string,
   });
   const [deleteComment] = useDeleteCommentMutation();
   const handleCreateComment = (): void => {
-    void navigate("/comment/create");
+    void navigate("/comment/create/" + id);
+  };
+  const handleDeletePopUp = () => {
+    setIsDeletePopupOpen(!isDeletePopupOpen);
   };
 
   const handleDeleteComment = async (id: string): Promise<void> => {
@@ -96,7 +103,8 @@ export default function DetailPostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeleteComment(data?.id as string);
+                  setSelectedComment(data?.id as string);
+                  handleDeletePopUp();
                 }}
               >
                 <label
@@ -120,6 +128,16 @@ export default function DetailPostPage(): React.ReactElement {
 
   return (
     <div className="max-w-7xl mx-auto">
+      <DeletePopUp
+        isOpen={isDeletePopupOpen}
+        data={"Comment"}
+        onClose={handleDeletePopUp}
+        onEdit={() => {
+          handleDeletePopUp();
+          void handleDeleteComment(selectedComment);
+        }}
+        menu="Comment"
+      />
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
           <div className="flex mb-4">

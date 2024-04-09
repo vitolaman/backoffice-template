@@ -18,6 +18,7 @@ import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
 import { PDF } from "assets/images";
 import PDFViewer from "components/post/PDFViewer";
 import { EyeIcon } from "@heroicons/react/24/outline";
+import DeletePopUp from "components/modal/other/Delete";
 
 export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
@@ -28,11 +29,15 @@ export default function PostPage(): React.ReactElement {
     limit: 10,
     page: 1,
   });
+  const [selectedPost, setSelectedPost] = useState<string>("");
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [modalPDF, setModalPDF] = useState<boolean>(false);
   const [file, setFile] = useState("");
   const { data, isLoading, refetch } = usePostListQuery(searchParams);
   const [deletePost] = useDeletePostMutation();
-
+  const handleDeletePopUp = () => {
+    setIsDeletePopupOpen(!isDeletePopupOpen);
+  };
   const handleCreatePost = (): void => {
     void navigate("/post/create");
   };
@@ -127,7 +132,8 @@ export default function PostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeletePost(data?.id as string);
+                  setSelectedPost(data?.id as string);
+                  handleDeletePopUp();
                 }}
               >
                 <label
@@ -170,6 +176,16 @@ export default function PostPage(): React.ReactElement {
         file={file as string}
         isOpen={modalPDF}
         onClose={() => setModalPDF(false)}
+      />
+      <DeletePopUp
+        isOpen={isDeletePopupOpen}
+        data={"Post"}
+        onClose={handleDeletePopUp}
+        onEdit={() => {
+          handleDeletePopUp();
+          void handleDeletePost(selectedPost);
+        }}
+        menu="Post"
       />
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
