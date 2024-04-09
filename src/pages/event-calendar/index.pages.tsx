@@ -28,10 +28,12 @@ const EventCalendarPage: React.FC = () => {
     const { data, refetch } = useEventListQuery(searchParams);
 
     useEffect(() => {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 500);
-    }, []);
+        setIsLoading(true);
+    }, [searchParams]);
+
+    useEffect(() => {
+        setIsLoading(false);
+    }, [data]);
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -58,12 +60,6 @@ const EventCalendarPage: React.FC = () => {
         setIdEvent(id);
         setIsUpdateModalOpen(true);
     }; 
-
-    // const openDetailModal = (id: string) => {
-    //     setIdEvent(id);
-    //     console.log(idEvent);
-    //     setIsDetailModalOpen(true);
-    // };
 
     const openDetailModal = async (id: string): Promise<void> => {
         try {
@@ -216,7 +212,7 @@ const EventCalendarPage: React.FC = () => {
             <div className="flex flex-col">
                 <Pagination
                 currentPage={data!?.meta.currentPage}
-                totalPages={data!?.meta.totalPage}
+                totalPages={data!?.meta.totalPages}
                 onPageChange={handlePageChange}
                 />
             </div>

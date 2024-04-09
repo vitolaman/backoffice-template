@@ -13,8 +13,8 @@ export type EventList = Event[];
 
 export interface Metadata {
     currentPage: number;
-    limit: number;
-    totalPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
 }
 
 export interface EventCalendarRes {

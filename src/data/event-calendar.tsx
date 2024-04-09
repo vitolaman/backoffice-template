@@ -35,7 +35,7 @@ export const dummyEvents: EventCalendarRes = {
   ],
   meta: {
     currentPage: 1,
-    limit: 10,
-    totalPage: 10,
+    totalPages: 1,
+    hasNextPage: false,
   },
 };
