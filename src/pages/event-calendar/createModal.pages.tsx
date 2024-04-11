@@ -9,9 +9,10 @@ import { CreateEventForm } from '_interfaces/event-calendar.interfaces';
 interface CreateModalFormProps {
   open: boolean;
   onClose: () => void;
+  onCloseSuccess: () => void;
 }
 
-const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
+const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose, onCloseSuccess }) => {
     const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
     const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
 
@@ -34,12 +35,6 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
     const handleCancelPopup = () => {
         setIsCancelPopupOpen(!isCancelPopupOpen);
         reset();
-        setPreview(undefined);
-    };
-
-    const handleSavePopup = () => {
-        setIsSavePopupOpen(!isSavePopupOpen);
-        // handleCreate();
         setPreview(undefined);
     };
 
@@ -67,7 +62,6 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
 
     useEffect(() => {
         const firstError = Object.keys(errors)[0] as keyof CreateEventForm;
-        console.log(firstError);
         if (firstError) {
           setFocus(firstError);
           const element = errors[firstError]?.ref;
@@ -87,7 +81,7 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose }) => {
     
         if (isValid) {
           await handleCreate();
-          onClose();
+          onCloseSuccess();
         } else {
           console.log('There are validation errors in the form');
         }
@@ -218,15 +212,6 @@ return (
                 reset();
             }}
             menu={"Create"}/>
-
-        {/* <SavePopUp
-            isOpen={isSavePopupOpen}
-            data={"Create"}
-            onClose={handleSavePopup}
-            onEdit={() => {
-                setIsSavePopupOpen(false);
-            }}
-            menu={"Event"}/> */}
     </div>
 );
 };

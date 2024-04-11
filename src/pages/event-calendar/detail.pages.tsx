@@ -11,7 +11,6 @@ interface DetailEventModalProps {
   }
 
 const DetailEventModal: React.FC<DetailEventModalProps> = ({ open, onClose, id }) => { 
-  console.log(id); 
   const { data } = useEventDetailQuery({id});
 
   return (

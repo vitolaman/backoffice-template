@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { EventListReq, Event } from '_interfaces/event-calendar.interfaces'; 
 import SearchInput from 'components/search-input';
 import { Columns, Table } from "components/table/table";
@@ -8,16 +8,16 @@ import { Button } from 'react-daisyui';
 import { MdDelete, MdModeEditOutline, MdVisibility } from "react-icons/md";
 import CreateModalForm from './createModal.pages';
 import UpdateEventModal from './editModal.pages';
-import DeleteEventModal from './deleteConfirmation.pages';
-import { useEventListQuery } from 'services/modules/event-calendar';
+import { useDeleteEventMutation, useEventListQuery } from 'services/modules/event-calendar';
 import DetailEventModal from './detail.pages';
-import { useNavigate } from 'react-router-dom';
 import moment from "moment";
+import { toast } from 'react-toastify';
+import { errorHandler } from 'services/errorHandler';
+import DeletePopUp from 'components/modal/other/Delete';
 
 
 const EventCalendarPage: React.FC = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
     
     const [searchParams, setSearchParams] = useState<EventListReq>({
         search: '',
@@ -25,15 +25,7 @@ const EventCalendarPage: React.FC = () => {
         page: 1,
     });
 
-    const { data, refetch } = useEventListQuery(searchParams);
-
-    useEffect(() => {
-        setIsLoading(true);
-    }, [searchParams]);
-
-    useEffect(() => {
-        setIsLoading(false);
-    }, [data]);
+    const { data, refetch, isLoading } = useEventListQuery(searchParams);
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -41,17 +33,23 @@ const EventCalendarPage: React.FC = () => {
     const [isDeleteConfirmation, setIsDeleteConfirmation] = useState(false);
 
     const [idEvent, setIdEvent] = useState('');
-    const [selectedEvent, setSelectedEvent] = useState<Event>();
 
     const closeModal = () => {
+        setIsCreateModalOpen(false);
+        setIsUpdateModalOpen(false);
+        setIsDeleteConfirmation(false);
+        setIsDetailModalOpen(false);
+        setIdEvent('');
+    };
+
+    const closeModalSuccess = () => {
         refetch();
         setIsCreateModalOpen(false);
         setIsUpdateModalOpen(false);
         setIsDeleteConfirmation(false);
         setIsDetailModalOpen(false);
         setIdEvent('');
-        setSelectedEvent(undefined);
-    };
+    }
     
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -70,10 +68,22 @@ const EventCalendarPage: React.FC = () => {
           console.log(error);
         }
       };
-    
-    const openDeleteModal = (id: string) => {
-        setIdEvent(id);
-        setIsDeleteConfirmation(true);
+
+    const handleDeletePopUp = () => {
+        setIsDeleteConfirmation(!isDeleteConfirmation);
+    };
+
+    const [deleteEventServices] = useDeleteEventMutation();
+
+    const handleDelete = async (id: string): Promise<void> => {
+      try {
+        await deleteEventServices({id});
+        toast.success('Event deleted successfully'); 
+        closeModal();
+      } catch (error) {
+        errorHandler(error);
+        console.error('Error:', error);
+      } 
     };
     
     const handlePageChange = async (page: number): Promise<void> => {
@@ -126,7 +136,6 @@ const EventCalendarPage: React.FC = () => {
                         className="p-0"
                         onClick={() => {
                             void openDetailModal(data?.id as string);
-                            console.log(data?.id)
                         }}
                         >
                         <label
@@ -156,7 +165,8 @@ const EventCalendarPage: React.FC = () => {
                       placeholder={""}
                       className="p-0"
                       onClick={() => {
-                        void openDeleteModal(data?.id as string);
+                        setIdEvent(data?.id as string);
+                        handleDeletePopUp();
                       }}
                     >
                       <label
@@ -225,6 +235,7 @@ const EventCalendarPage: React.FC = () => {
         <CreateModalForm
             open={isCreateModalOpen}
             onClose={closeModal}
+            onCloseSuccess={closeModalSuccess}
         />
         
         {idEvent !== '' &&
@@ -239,18 +250,24 @@ const EventCalendarPage: React.FC = () => {
             <UpdateEventModal
                 open={isUpdateModalOpen}
                 onClose={closeModal}
+                onCloseSuccess={closeModalSuccess}
                 id={idEvent}
             /> 
         }
 
         {idEvent !== '' &&
-            <DeleteEventModal
-                open={isDeleteConfirmation}
+            <DeletePopUp
+                isOpen={isDeleteConfirmation}
+                data={"Event"}
                 onClose={closeModal}
-                id={idEvent}
+                onEdit={() => {
+                    handleDeletePopUp();
+                    void handleDelete(idEvent);
+                    closeModalSuccess();
+                }}
+                menu="Event"
             />
         }
-        
         </div>
     );
 }

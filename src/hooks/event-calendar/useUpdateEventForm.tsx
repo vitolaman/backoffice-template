@@ -37,6 +37,7 @@ const useUpdateEventForm = () => {
     setFocus,
     watch,
     trigger,
+    setValue,
   } = useForm<UpdateEventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -53,19 +54,15 @@ const useUpdateEventForm = () => {
         date: data.date,
         location: data.location,
       };
-      
-      console.log(payload);
-      if (data.banner !== "") {
-        console.log(data.banner[0]);
+      if (data.banner instanceof FileList && data.banner.length > 0) {
         const image = await uploadFile(
-          accessToken!,
-          data.banner[0] as File
+           accessToken!,
+           data.banner[0] as File
         );
         payload.banner = image;
-      } else {
+      } else if (typeof data.banner === "string") {
         payload.banner = data.banner;
       }
-      console.log(payload);
       await updateEvent(payload).unwrap();
       toast('Event updated successfully');
       reset();
@@ -89,6 +86,7 @@ const handleUpdate = handleSubmit(update);
     isLoading,
     watch,
     trigger,
+    setValue,
   };
 };
 

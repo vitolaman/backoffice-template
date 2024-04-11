@@ -10,14 +10,13 @@ import { useEventDetailQuery } from "services/modules/event-calendar";
 interface UpdateModalProps {
     open: boolean;
     onClose: () => void;
+    onCloseSuccess: () => void;
     id: string;
   }
 
-const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) => {
+const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, onCloseSuccess, id }) => {
   const { data } = useEventDetailQuery({ id: id as string });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
   const {
     register,
@@ -27,7 +26,9 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
     watch,
     handleUpdate,
     control,
-    trigger
+    trigger,
+    isLoading,
+    setValue,
   } = useUpdateEventForm();
 
   const [file, setFile] = useState<File | undefined>();
@@ -38,13 +39,6 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
     reset();
     setPreview(undefined);
   };
-
-  const handleSavePopup = () => {
-    setIsSavePopupOpen(!isSavePopupOpen);
-    setPreview(undefined);
-  };
-
-  // const [formData, setFormData] = useState<UpdateEventReq>();
 
   const [formData, setFormData] = useState<UpdateEventReq>();
 
@@ -87,7 +81,6 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0] as keyof UpdateEventForm;
-    console.log(firstError);
     if (firstError) {
       setFocus(firstError);
       const element = errors[firstError]?.ref;
@@ -105,9 +98,15 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
     e.preventDefault();
     const isValid = await trigger();
 
+    if(file === undefined){
+      setValue("banner", data!?.data.banner);
+    }
+
     if (isValid) {
       await handleUpdate();
-      onClose();
+      onCloseSuccess();
+      setFile(undefined);
+      setPreview(undefined);
     } else {
       console.log('There are validation errors in the form');
     }
@@ -197,10 +196,10 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
                     <div className="text-san-juan">Choose your image here</div>
                     )}
                     <FileInput
+                    id="banner"
                     {...register("banner")}
                     size="sm"
                     accept="image/*"
-                    src={formData?.banner ? formData.banner : (data?.data.banner || '')}
                     onChange={handleOnChange}
                     />
                 </div>
@@ -268,16 +267,6 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, id }) =>
         }}
         menu={"Update"}
     />
-            
-    {/* <SavePopUp
-        isOpen={isSavePopupOpen}
-        data={"Update"}
-        onClose={handleSavePopup}
-        onEdit={() => {
-        setIsSavePopupOpen(false);
-        }}
-        menu={"Event"}
-    /> */}
     </div>
   );
 };

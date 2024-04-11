@@ -21,7 +21,12 @@ const useCreateEventForm = () => {
         .required('Title is required')
         .min(5, "Title cannot less than 5 char")
         .max(255, "Title cannot more than 255 char"),
-    banner: yup.mixed().defined().required('Image is required'),
+    banner: yup.mixed().test('fileList', 'Image is required', (value) => {
+      if (!(value instanceof FileList && value.length > 0)) {
+        return false;
+      }
+      return true;
+    }),
     description: yup
         .string()
         .required('Description is required')
@@ -40,6 +45,7 @@ const useCreateEventForm = () => {
     setFocus,
     watch,
     trigger,
+    setError,
   } = useForm<CreateEventForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -57,16 +63,13 @@ const useCreateEventForm = () => {
         link: data.link,
         created_at: new Date().toISOString(),
       };
-      if (data.banner !== "" && data.banner !== undefined) {
-        console.log(data.banner[0]);
+      if (data.banner instanceof FileList && data.banner.length > 0) {
         const image = await uploadFile(
-          accessToken!,
-          data.banner[0] as File
+           accessToken!,
+           data.banner[0] as File
         );
-
         payload.banner = image;
       }
-      console.log(payload);
       await createEvent(payload).unwrap();
       reset();
       toast('Event created successfully');
