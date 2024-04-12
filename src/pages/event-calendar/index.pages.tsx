@@ -102,7 +102,7 @@ const EventCalendarPage: React.FC = () => {
         {
             fieldId: "date",
             label: "Date",
-            render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,},
+            render: (data) => <p>{moment(data?.date).format("MMM Do YY")}</p>,},
         {
             fieldId: "location",
             label: "Location",

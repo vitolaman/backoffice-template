@@ -31,6 +31,7 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose, onClos
         try {
           await create(formData);
           reset();
+          reset({ banner: "" });
           onCloseSuccess();
         } catch (error) {
           console.error('Form submission failed:', error);
