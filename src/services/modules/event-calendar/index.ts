@@ -23,7 +23,7 @@ export const eventCalendarApi = Api.injectEndpoints({
     CreateEvent: build.mutation<string, CreateEventForm>({
       query(body) {
         return {
-          url: `event`,
+          url: `event/`,
           method: "POST",
           body: {
             ...body,
