@@ -25,9 +25,7 @@ export const eventCalendarApi = Api.injectEndpoints({
         return {
           url: `event/`,
           method: "POST",
-          body: {
-            ...body,
-          },
+          body,
         };
       },
     }),
