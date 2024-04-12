@@ -35,7 +35,6 @@ export interface CreateEventReq {
     description: string;
     location: string;
     link: string;
-    created_at: string;
 }
 
 export interface CreateEventForm {
@@ -45,7 +44,6 @@ export interface CreateEventForm {
     description: string;
     location: string;
     link: string;
-    created_at: string;
 }
   
 export interface UpdateEventReq {

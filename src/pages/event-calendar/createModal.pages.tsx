@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, FileInput, Modal } from 'react-daisyui';
-import SavePopUp from 'components/modal/other/Save';
 import ValidationError from 'components/validation/error';
 import CancelPopUp from 'components/modal/other/Cancel';
 import useCreateEventForm from '../../hooks/event-calendar/useCreateEventForm';
 import { CreateEventForm } from '_interfaces/event-calendar.interfaces';
+import useFilePreview from 'hooks/shared/useFilePreview';
+import CInput from 'components/input';
 
 interface CreateModalFormProps {
   open: boolean;
@@ -13,52 +14,35 @@ interface CreateModalFormProps {
 }
 
 const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose, onCloseSuccess }) => {
-    const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
     const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
 
     const {
+        handleSubmit,
+        create,
         register,
         errors,
         reset,
         setFocus,
         isLoading,
         watch,
-        handleCreate,
-        control,
-        trigger,
     } = useCreateEventForm();
 
-    const [file, setFile] = useState<File | undefined>();
-    const [preview, setPreview] = useState<string | undefined>();
+    const onSubmit = async (formData: CreateEventForm) => {
+        try {
+          await create(formData);
+          reset();
+          onCloseSuccess();
+        } catch (error) {
+          console.error('Form submission failed:', error);
+        }
+    };
 
+    const banner = watch("banner");
+    const [imagePreview] = useFilePreview(banner as FileList);
 
     const handleCancelPopup = () => {
         setIsCancelPopupOpen(!isCancelPopupOpen);
-        reset();
-        setPreview(undefined);
     };
-
-    function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
-        const target = e.target as HTMLInputElement & {
-            files: FileList;
-        }
-
-        const selectedFile = target.files[0];
-        
-        if (selectedFile) {
-            setFile(selectedFile);
-            
-            const fileReader = new FileReader();
-            fileReader.onload = function() {
-                const result = fileReader.result;
-                if (result) {
-                    setPreview(result as string);
-                }
-            }
-            
-            fileReader.readAsDataURL(selectedFile);
-        }
-    }
 
     useEffect(() => {
         const firstError = Object.keys(errors)[0] as keyof CreateEventForm;
@@ -75,22 +59,10 @@ const CreateModalForm: React.FC<CreateModalFormProps> = ({ open, onClose, onClos
         }
       }, [errors, setFocus]);
     
-      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const isValid = await trigger();
-    
-        if (isValid) {
-          await handleCreate();
-          onCloseSuccess();
-        } else {
-          console.log('There are validation errors in the form');
-        }
-      };
-    
 return (
     <div>
         <Modal backdrop={false} open={open} className="bg-white">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header>
                     <h3 className="text-2xl text-[#262626] font-bold">Create Event</h3>
                 </Modal.Header>
@@ -99,13 +71,12 @@ return (
                         <label htmlFor="title" className="block font-semibold mb-4">
                             Title
                         </label>
-                        <input
+                        <CInput
                             type="text"
                             id="title"
                             {...register('title')}
                             placeholder="Enter title..."
-                            className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
-                        <ValidationError error={errors.title}/>
+                            error={errors.title}/>
                     </div>
 
                     <div className="flex flex-col gap-2 mb-6">
@@ -131,28 +102,27 @@ return (
                         <label htmlFor="date" className="block font-semibold mb-4">
                             Date
                         </label>
-                        <input
+                        <CInput
                             type="date"
                             id="date"
                             {...register('date')}
-                            className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
-                        <ValidationError error={errors.date}/>
+                            error={errors.date}/>
                     </div>
 
                     <div className="grid grid-cols-2 gap-5 mt-4">
                         <div
                             className={`mb-6 w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3 col-span-2`}>
                             {
-                                preview
+                                banner && imagePreview
                                     ? (
                                         <img
                                             className="flex mx-auto w-[500px] h-[166px] object-cover"
-                                            src={preview}
+                                            src={imagePreview}
                                             alt=""/>
                                     )
                                     : (<div className="text-san-juan">Choose your image here</div>)
                             }
-                            <FileInput {...register("banner")} size="sm" accept="image/*" onChange={handleOnChange}/>
+                            <FileInput {...register("banner")} size="sm" accept="image/*"/>
                         </div>
                     </div>
                     <ValidationError error={errors.banner}/>
@@ -160,25 +130,23 @@ return (
                         <label htmlFor="location" className="block font-semibold mb-4">
                             Location
                         </label>
-                        <input
+                        <CInput
                             type="text"
                             id="location"
                             {...register('location')}
                             placeholder="Enter location..."
-                            className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
-                        <ValidationError error={errors.location}/>
+                            error={errors.location}/>
                     </div>
                     <div className="mb-6">
                         <label htmlFor="link" className="block font-semibold mb-4">
                             Link
                         </label>
-                        <input
+                        <CInput
                             type="text"
                             id="link"
                             {...register('link')}
                             placeholder="Enter link..."
-                            className="w-full border rounded-lg py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
-                        <ValidationError error={errors.link}/>
+                            error={errors.link}/>
                     </div>
                 </Modal.Body>
                 <Modal.Actions className='flex justify-around'>
@@ -210,6 +178,7 @@ return (
                 handleCancelPopup();
                 onClose();
                 reset();
+                reset({ banner: "" });
             }}
             menu={"Create"}/>
     </div>

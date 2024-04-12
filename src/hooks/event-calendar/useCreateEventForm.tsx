@@ -61,7 +61,6 @@ const useCreateEventForm = () => {
         date: data.date,
         location: data.location,
         link: data.link,
-        created_at: new Date().toISOString(),
       };
       if (data.banner instanceof FileList && data.banner.length > 0) {
         const image = await uploadFile(
@@ -71,6 +70,7 @@ const useCreateEventForm = () => {
         payload.banner = image;
       }
       await createEvent(payload).unwrap();
+      console.log(payload);
       reset();
       toast('Event created successfully');
     } catch (error) {
@@ -81,10 +81,11 @@ const useCreateEventForm = () => {
     }
   };
 
-const handleCreate = handleSubmit(create);
+// const handleCreate = handleSubmit(create);
 
   return {
-    handleCreate,
+    handleSubmit,
+    create,
     register,
     reset,
     errors,

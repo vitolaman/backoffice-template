@@ -98,7 +98,6 @@ const EventCalendarPage: React.FC = () => {
         {
             fieldId: "title",
             label: "Title",
-            render: (data) => <p>{data?.title}</p>,
         },
         {
             fieldId: "date",
@@ -107,7 +106,6 @@ const EventCalendarPage: React.FC = () => {
         {
             fieldId: "location",
             label: "Location",
-            render: (data) => <p>{data?.location}</p>,
         },
         {
             fieldId: "id",

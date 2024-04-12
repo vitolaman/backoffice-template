@@ -74,10 +74,9 @@ const useUpdateEventForm = () => {
     }
   };
 
-const handleUpdate = handleSubmit(update);
-
   return {
-    handleUpdate,
+    handleSubmit,
+    update,
     register,
     reset,
     errors,
