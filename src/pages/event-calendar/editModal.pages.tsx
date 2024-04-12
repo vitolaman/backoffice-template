@@ -1,10 +1,8 @@
 import { UpdateEventForm, UpdateEventReq } from "_interfaces/event-calendar.interfaces";
 import CInput from "components/input";
 import CancelPopUp from "components/modal/other/Cancel";
-import SavePopUp from "components/modal/other/Save";
 import ValidationError from "components/validation/error";
 import useUpdateEventForm from "hooks/event-calendar/useUpdateEventForm";
-import useFilePreview from "hooks/shared/useFilePreview";
 import { useEffect, useState } from "react";
 import { Button, FileInput, Modal } from "react-daisyui";
 import { useEventDetailQuery } from "services/modules/event-calendar";
@@ -172,7 +170,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, onCloseS
                   error={errors.location}
                 />
             </div>
-            {/* <div className="mb-6">
+            <div className="mb-6">
                 <label htmlFor="link" className="block font-semibold mb-4">
                 Link
                 </label>
@@ -182,7 +180,7 @@ const UpdateEventModal:  React.FC<UpdateModalProps> = ({ open, onClose, onCloseS
                   {...register('link')}
                   error={errors.link}
                 />
-            </div> */}
+            </div>
           </Modal.Body>
           <Modal.Actions className='flex justify-around'>
             <Button

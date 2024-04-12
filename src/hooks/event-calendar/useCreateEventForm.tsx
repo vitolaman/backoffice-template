@@ -33,7 +33,7 @@ const useCreateEventForm = () => {
         .min(10, "Description cannot less than 10 char"),
     date: yup.string().required('Date is required'),
     location: yup.string().required('Location is required'),
-    link: yup.string().required('Link is required'),
+    link: yup.string().nullable(),
   });
 
   const {
@@ -70,7 +70,6 @@ const useCreateEventForm = () => {
         payload.banner = image;
       }
       await createEvent(payload).unwrap();
-      console.log(payload);
       reset();
       toast('Event created successfully');
     } catch (error) {

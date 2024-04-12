@@ -53,6 +53,7 @@ export interface UpdateEventReq {
     date: string;
     description: string;
     location: string;
+    link: string;
 }
  
 export interface UpdateEventForm {
@@ -62,6 +63,7 @@ export interface UpdateEventForm {
     date: string;
     description: string;
     location: string;
+    link: string;
 }
 
 export interface EventDetailRes {

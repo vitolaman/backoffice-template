@@ -26,6 +26,7 @@ const useUpdateEventForm = () => {
         .min(10, "Description cannot less than 10 char"),
     date: yup.string().required('Date is required'),
     location: yup.string().required('Location is required'),
+    link: yup.string().nullable(),
   });
 
   const {
@@ -53,7 +54,9 @@ const useUpdateEventForm = () => {
         description: data.description,
         date: data.date,
         location: data.location,
+        link: data.link,
       };
+
       if (data.banner instanceof FileList && data.banner.length > 0) {
         const image = await uploadFile(
            accessToken!,

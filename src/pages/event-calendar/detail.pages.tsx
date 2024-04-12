@@ -52,12 +52,14 @@ const DetailEventModal: React.FC<DetailEventModalProps> = ({ open, onClose, id }
                 </label>
                 <p>{data?.data.location}</p>
             </div>
-            <div className="mb-6">
-                <label htmlFor="link" className="block font-semibold mb-4">
-                Link
-                </label>
-                <p><a href={data?.data.link}>{data?.data.link}</a></p>
-            </div>
+            {data?.data.link && 
+              <div className="mb-6">
+                  <label htmlFor="link" className="block font-semibold mb-4">
+                  Link
+                  </label>
+                  <p><a href={data?.data.link}>{data?.data.link}</a></p>
+              </div>
+            }
           </Modal.Body>
           <Modal.Actions className='flex justify-center'>
             <Button onClick={onClose} className='rounded-full px-6 py-2'>Close</Button>
