@@ -7,6 +7,7 @@ import CreatePost, { createPostRouteName } from "pages/post/create.page";
 import CreateComment, {
   createCommentRouteName,
 } from "pages/comment/create.page";
+import EventCalendarPage from "pages/event-calendar/index.pages";
 
 const protectedRoutes: RouteObject[] = [
   { path: "*", element: <Navigate to="/post" /> },
@@ -19,6 +20,7 @@ const protectedRoutes: RouteObject[] = [
       { path: detailPostRouteName, element: <DetailPostPage /> },
       { path: createPostRouteName, element: <CreatePost /> },
       { path: createCommentRouteName, element: <CreateComment /> },
+      { path: "/event", element: <EventCalendarPage /> },
     ],
   },
 ];

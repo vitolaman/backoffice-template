@@ -20,6 +20,10 @@ const menuItems: MenuItem[] = [
     name: "Post",
     path: postRouteName,
   },
+  {
+    name: "Event Calendar",
+    path: "/event",
+  },
 ];
 
 export { menuItems };
