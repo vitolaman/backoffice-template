@@ -70,7 +70,6 @@ const useCreatePostForm = () => {
           accessToken!,
           data.image1.image_link[0] as File
         );
-        console.log(image);
 
         payload.images.push(image);
       } else {
@@ -99,7 +98,6 @@ const useCreatePostForm = () => {
       }
       if (data.file !== "") {
         const file = await uploadFile(accessToken!, data.file[0] as File);
-        console.log(file);
 
         payload.file = file;
       }

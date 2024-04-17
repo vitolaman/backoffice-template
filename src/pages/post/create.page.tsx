@@ -272,7 +272,7 @@ const CreatePost = () => {
                 />
               )}
             />
-            <ValidationError error={errors.text} />{" "}
+            <ValidationError error={errors.text} />
           </div>
         </div>
       </form>
