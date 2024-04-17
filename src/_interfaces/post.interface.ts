@@ -34,6 +34,8 @@ export interface PostListReq {
   search: string;
   page: number;
   limit: number;
+  date?: string;
+  by?: "User" | "Admin";
 }
 
 export interface CreatePostForm {

@@ -26,13 +26,17 @@ const menuStyles = {
     "hover:bg-slate-100 hover:bg-opacity-20 transition-all duration-100 p-4 cursor-pointer ml-2 rounded-l-full text-white",
 };
 
-const LogoutModal: ForwardRefRenderFunction<
+export const LogoutModal: ForwardRefRenderFunction<
   HTMLDialogElement,
   ModalLogoutProps
 > = ({ handleClose, handleLogout }, ref) => {
   return (
     <div className="font-sans">
-      <Modal backdrop={true} ref={ref} className="bg-white">
+      <Modal
+        backdrop={true}
+        ref={ref}
+        className="bg-white"
+      >
         <Modal.Header className="font-bold">
           Are you sure want to log out?
         </Modal.Header>
@@ -40,7 +44,10 @@ const LogoutModal: ForwardRefRenderFunction<
           Press ESC key or click the button below to close
         </Modal.Body>
         <Modal.Actions>
-          <Button onClick={handleLogout} className="text-white bg-red-500">
+          <Button
+            onClick={handleLogout}
+            className="text-white bg-red-500"
+          >
             Yes, sure
           </Button>
           <Button onClick={handleClose}>Close</Button>
@@ -50,25 +57,10 @@ const LogoutModal: ForwardRefRenderFunction<
   );
 };
 
-const ForwardedRefLogoutModal = forwardRef(LogoutModal);
+export const ForwardedRefLogoutModal = forwardRef(LogoutModal);
 
 const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
   const [menus, setMenus] = useState(menuItems);
-
-  const dispatch = useAppDispatch();
-  const modalRef = useRef<HTMLDialogElement>(null);
-
-  const handleShowDialog = useCallback(() => {
-    modalRef.current?.showModal();
-  }, [modalRef]);
-
-  const handleCloseDialog = useCallback(() => {
-    modalRef.current?.close();
-  }, [modalRef]);
-
-  const handleLogout = () => {
-    dispatch(deleteTokenAuth());
-  };
 
   return (
     <aside
@@ -78,7 +70,10 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
     >
       <div className="pl-4 pr-2">
         <div className="w-full flex-col flex justify-center items-center gap-2 py-4">
-          <img src={imageLogo} width={120} />
+          <img
+            src={imageLogo}
+            width={120}
+          />
         </div>
       </div>
 
@@ -86,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
         <ul className="flex flex-col">
           {menus.map((item, index) => {
             return (
-              <>
+              <div key={index}>
                 <NavLink
                   key={index}
                   to={item.path}
@@ -132,31 +127,11 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
                       ))}
                   </ul>
                 )}
-              </>
+              </div>
             );
           })}
-          <div
-            className={`${
-              active ? "left-0 w-[20%] fixed" : "-left-[20%] w-[0%]"
-            } bottom-5 px-4 left-0 transition-all`}
-          >
-            <Button
-              onClick={handleShowDialog}
-              className="w-full bg-red-500 hover:bg-red-400 border-0 text-white"
-              shape="circle"
-            >
-              <FiLogOut size={20} />
-              Log out
-            </Button>
-          </div>
         </ul>
       </div>
-
-      <ForwardedRefLogoutModal
-        ref={modalRef}
-        handleLogout={handleLogout}
-        handleClose={handleCloseDialog}
-      />
     </aside>
   );
 };

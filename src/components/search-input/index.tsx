@@ -1,4 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 interface SearchI {
@@ -11,11 +12,24 @@ const SearchInput = ({
   onSubmit: (data: SearchI) => void;
   placeholder: string;
 }) => {
-  const { handleSubmit, register } = useForm<SearchI>({ mode: "onSubmit" });
+  const { handleSubmit, register, watch } = useForm<SearchI>({
+    mode: "onSubmit",
+    defaultValues: {
+      text: "",
+    },
+  });
+  const text = watch("text");
+
+  useEffect(() => {
+    if (text === "") {
+      onSubmit({ text });
+    }
+  }, [text]);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex border rounded-full items-center p-2"
+      className="flex border rounded-full border-gray-300 items-center p-2"
     >
       <input
         type="text"
