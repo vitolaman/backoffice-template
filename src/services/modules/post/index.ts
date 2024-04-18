@@ -43,6 +43,15 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
+    UpdatePost: build.mutation<string, { id: string; body: CreatePostReq }>({
+      query({ id, body }) {
+        return {
+          url: `post/post/admin/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -52,4 +61,5 @@ export const {
   useDeletePostMutation,
   usePostDetailQuery,
   usePostListQuery,
+  useUpdatePostMutation,
 } = postApi;
