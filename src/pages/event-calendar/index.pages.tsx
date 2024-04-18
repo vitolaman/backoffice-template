@@ -38,7 +38,6 @@ const EventCalendarPage: React.FC = () => {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteConfirmation, setIsDeleteConfirmation] = useState(false);
 
   const [idEvent, setIdEvent] = useState("");
@@ -105,7 +104,7 @@ const EventCalendarPage: React.FC = () => {
         >
           {data?.title}
         </p>
-      )
+      ),
     },
     {
       fieldId: "date",
@@ -206,12 +205,32 @@ const EventCalendarPage: React.FC = () => {
                   setSearchParams((prev) => ({ ...prev, search: text }));
                 }}
               />
-              <button
+              <input
+                type="date"
+                placeholder="Post Date"
+                className="border rounded-full !border-gray-50 p-2"
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, date: e.target.value }))
+                }
+              />
+              <Button
+                onClick={() => {
+                  setSearchParams({
+                    search: "",
+                    limit: 10,
+                    page: 1,
+                  });
+                }}
+                className="bg-red-400 text-white hover:bg-red-400/90"
+              >
+                Reset Filter
+              </Button>
+              <Button
                 onClick={openCreateModal}
-                className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-san-juan text-white hover:bg-san-juan/90"
+                className="bg-san-juan text-white hover:bg-san-juan/90"
               >
                 Create Event
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -220,7 +239,7 @@ const EventCalendarPage: React.FC = () => {
             <div className="overflow-x-auto">
               <div className="align-middle inline-block min-w-full">
                 <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
-                  <Table
+                  <Table<Event>
                     columns={header}
                     data={data?.data}
                     loading={isLoading}

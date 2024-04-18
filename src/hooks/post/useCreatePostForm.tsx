@@ -61,9 +61,6 @@ const useCreatePostForm = () => {
         text: data.text,
         images: [],
         file: "",
-        user_id: data.user_id,
-        by_admin: true,
-        created_at: new Date().toISOString(),
       };
       if (data.image1.image_link !== "") {
         const image = await uploadFile(

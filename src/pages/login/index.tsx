@@ -68,10 +68,6 @@ const Login = () => {
                   <ValidationError error={errors.password} />
                 </div>
               </div>
-              <section className="flex flex-row text-center align-middle items-center gap-2">
-                <Checkbox />
-                <p>Remember Me</p>
-              </section>
               <Button
                 type="submit"
                 shape="circle"

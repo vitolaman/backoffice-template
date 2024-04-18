@@ -16,7 +16,7 @@ import { errorHandler } from "services/errorHandler";
 import moment from "moment";
 import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
 import PDFViewer from "components/post/PDFViewer";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
 import DeletePopUp from "components/modal/other/Delete";
 import { FaRegFilePdf } from "react-icons/fa";
 import CInput from "components/input";
@@ -141,6 +141,38 @@ export default function PostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
+                  navigate(`/post/${data?.id}`);
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                >
+                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
+                  See Detail
+                </label>
+              </MenuItem>
+              {data?.by_admin && (
+                <MenuItem
+                  placeholder={""}
+                  className="p-0"
+                  onClick={() => {
+                    navigate(`/post/edit/${data?.id}`);
+                  }}
+                >
+                  <label
+                    htmlFor="item-1"
+                    className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                  >
+                    <PencilIcon className="mt-1 me-3 h-4 w-4" />
+                    Edit Post
+                  </label>
+                </MenuItem>
+              )}
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
                   setSelectedPost(data?.id as string);
                   handleDeletePopUp();
                 }}
@@ -151,21 +183,6 @@ export default function PostPage(): React.ReactElement {
                 >
                   <MdDeleteOutline className="mt-1 me-3 h-4 w-4" />
                   Delete Post
-                </label>
-              </MenuItem>
-              <MenuItem
-                placeholder={""}
-                className="p-0"
-                onClick={() => {
-                  navigate(`/post/${data?.id}`);
-                }}
-              >
-                <label
-                  htmlFor="item-1"
-                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
-                >
-                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
-                  See Detail
                 </label>
               </MenuItem>
             </MenuList>

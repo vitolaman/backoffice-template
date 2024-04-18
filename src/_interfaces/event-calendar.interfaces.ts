@@ -31,6 +31,7 @@ export interface EventListReq {
   search: string;
   limit: number;
   page: number;
+  date?: string;
 }
 
 export interface CreateEventReq {
