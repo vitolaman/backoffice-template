@@ -15,14 +15,15 @@ import { errorHandler } from "services/errorHandler";
 import moment from "moment";
 import { Comment } from "_interfaces/comment.interface";
 import {
-  useCommentListQuery,
   useDeleteCommentMutation,
+  useForumCommentListQuery,
+  useForumDeleteCommentMutation,
 } from "services/modules/comment";
-import DetailPostCard from "components/post/DetailPostCard";
 import DeletePopUp from "components/modal/other/Delete";
+import DetailForumCard from "components/forum/DetailForumCard";
 
-export const detailPostRouteName = "post/:id";
-export default function DetailPostPage(): React.ReactElement {
+export const detailForumRouteName = "forum/:id";
+export default function DetailForumPage(): React.ReactElement {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
@@ -33,13 +34,13 @@ export default function DetailPostPage(): React.ReactElement {
   });
   const [selectedComment, setSelectedComment] = useState<string>("");
 
-  const { data, isLoading, refetch } = useCommentListQuery({
+  const { data, isLoading, refetch } = useForumCommentListQuery({
     ...searchParams,
     id: id as string,
   });
-  const [deleteComment] = useDeleteCommentMutation();
+  const [deleteComment] = useForumDeleteCommentMutation();
   const handleCreateComment = (): void => {
-    void navigate(`/comment/create/${id}?type=post`);
+    void navigate(`/comment/create/${id}?type=forum`);
   };
   const handleDeletePopUp = () => {
     setIsDeletePopupOpen(!isDeletePopupOpen);
@@ -141,9 +142,9 @@ export default function DetailPostPage(): React.ReactElement {
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
           <div className="flex mb-4">
-            <h3 className="text-2xl text-black font-semibold">Detail Post</h3>
+            <h3 className="text-2xl text-black font-semibold">Detail Forum</h3>
           </div>
-          <DetailPostCard />
+          <DetailForumCard />
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-2xl text-black font-semibold">Comment List</h3>
             <div className="flex items-center justify-between gap-4 ml-4">

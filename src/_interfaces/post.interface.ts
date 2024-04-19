@@ -64,7 +64,7 @@ export interface FileType {
   link?: string;
 }
 
-interface ImageUpload {
+export interface ImageUpload {
   image_url: string;
   image_link: string | FileList;
 }
