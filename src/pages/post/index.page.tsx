@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Menu,
   MenuHandler,
@@ -6,7 +6,7 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-daisyui";
+import { Button, Select } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { PostList, PostListReq } from "_interfaces/post.interface";
@@ -15,10 +15,12 @@ import { MdDeleteOutline } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
 import moment from "moment";
 import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
-import { PDF } from "assets/images";
 import PDFViewer from "components/post/PDFViewer";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
 import DeletePopUp from "components/modal/other/Delete";
+import { FaRegFilePdf } from "react-icons/fa";
+import CInput from "components/input";
+import ContentContainer from "components/container";
 
 export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
@@ -68,7 +70,12 @@ export default function PostPage(): React.ReactElement {
       fieldId: "text",
       label: "Post Content",
       render: (data) => (
-        <p>
+        <p
+          onClick={() => {
+            navigate(`/post/${data?.id}`);
+          }}
+          className="underline hover:text-blue-300 cursor-pointer"
+        >
           {data?.text !== undefined &&
             (data.text.length > 20
               ? data?.text.slice(0, 15) + "..."
@@ -79,7 +86,9 @@ export default function PostPage(): React.ReactElement {
     {
       fieldId: "owner",
       label: "Posted At",
-      render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,
+      render: (data) => (
+        <p>{moment(data?.created_at).format("MMM Do, YYYY")}</p>
+      ),
     },
     {
       fieldId: "likes",
@@ -100,7 +109,7 @@ export default function PostPage(): React.ReactElement {
               }}
               className="rounded hover:bg-transparent w-full h-full border-none relative z-50 text-center flex justify-center items-center"
             >
-              <img src={PDF} alt="pdf" className="w-6 h-6 absolute z-50" />
+              <FaRegFilePdf />
             </Button>
           )}
         </div>
@@ -132,6 +141,38 @@ export default function PostPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
+                  navigate(`/post/${data?.id}`);
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                >
+                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
+                  See Detail
+                </label>
+              </MenuItem>
+              {data?.by_admin && (
+                <MenuItem
+                  placeholder={""}
+                  className="p-0"
+                  onClick={() => {
+                    navigate(`/post/edit/${data?.id}`);
+                  }}
+                >
+                  <label
+                    htmlFor="item-1"
+                    className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                  >
+                    <PencilIcon className="mt-1 me-3 h-4 w-4" />
+                    Edit Post
+                  </label>
+                </MenuItem>
+              )}
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
                   setSelectedPost(data?.id as string);
                   handleDeletePopUp();
                 }}
@@ -142,21 +183,6 @@ export default function PostPage(): React.ReactElement {
                 >
                   <MdDeleteOutline className="mt-1 me-3 h-4 w-4" />
                   Delete Post
-                </label>
-              </MenuItem>
-              <MenuItem
-                placeholder={""}
-                className="p-0"
-                onClick={() => {
-                  navigate(`/post/${data?.id}`);
-                }}
-              >
-                <label
-                  htmlFor="item-1"
-                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
-                >
-                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
-                  See Detail
                 </label>
               </MenuItem>
             </MenuList>
@@ -171,7 +197,7 @@ export default function PostPage(): React.ReactElement {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <ContentContainer>
       <PDFViewer
         file={file as string}
         isOpen={modalPDF}
@@ -198,6 +224,40 @@ export default function PostPage(): React.ReactElement {
                   setSearchParams((prev) => ({ ...prev, search: text }));
                 }}
               />
+              <input
+                type="date"
+                placeholder="Post Date"
+                className="border rounded-full !border-gray-50 p-2"
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, date: e.target.value }))
+                }
+              />
+              <Select
+                value={searchParams.by}
+                className="border-gray-300 rounded-full"
+                onChange={(e) =>
+                  setSearchParams((prev) => ({
+                    ...prev,
+                    by: e.target.value === "Admin" ? "Admin" : "User",
+                  }))
+                }
+              >
+                <option value="">Posted By</option>
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
+              </Select>
+              <Button
+                onClick={() => {
+                  setSearchParams({
+                    search: "",
+                    limit: 10,
+                    page: 1,
+                  });
+                }}
+                className="bg-red-400 text-white hover:bg-red-400/90"
+              >
+                Reset Filter
+              </Button>
               <Button
                 onClick={() => {
                   handleCreatePost();
@@ -232,6 +292,6 @@ export default function PostPage(): React.ReactElement {
           </div>
         </div>
       </div>
-    </div>
+    </ContentContainer>
   );
 }

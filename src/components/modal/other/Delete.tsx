@@ -37,7 +37,7 @@ const DeletePopUp: React.FC<ErrorPopupProps> = ({
             height="88"
             rx="44"
             fill="#FFF7D2"
-            fill-opacity="0.2"
+            fillOpacity="0.2"
           />
           <rect
             x="10.5"
@@ -46,7 +46,7 @@ const DeletePopUp: React.FC<ErrorPopupProps> = ({
             height="68"
             rx="34"
             fill="#FEEBA6"
-            fill-opacity="0.2"
+            fillOpacity="0.2"
           />
           <path
             opacity="0.2"
@@ -64,8 +64,8 @@ const DeletePopUp: React.FC<ErrorPopupProps> = ({
             fill="#D89918"
           />
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M71.5 47C71.496 45.8968 70.6021 45.0037 69.5 45.0037C70.6046 45.0037 71.5 44.1066 71.5 43C71.504 44.1032 72.3979 44.9963 73.5 44.9963C72.3954 44.9963 71.5 45.8934 71.5 47Z"
             fill="#D89918"
           />

@@ -34,6 +34,8 @@ export interface PostListReq {
   search: string;
   page: number;
   limit: number;
+  date?: string;
+  by?: "User" | "Admin";
 }
 
 export interface CreatePostForm {
@@ -43,18 +45,23 @@ export interface CreatePostForm {
   image3: ImageUpload;
   image4: ImageUpload;
   file: string | FileList;
-  user_id: string;
-  by_admin: boolean;
-  created_at: string;
 }
 
 export interface CreatePostReq {
   text: string;
   images: string[];
   file: string;
-  user_id: string;
-  by_admin: boolean;
-  created_at: string;
+}
+
+export interface UpdatePostForm {
+  text: string;
+  images: FileType[];
+  file: FileType;
+}
+
+export interface FileType {
+  file?: FileList;
+  link?: string;
 }
 
 interface ImageUpload {

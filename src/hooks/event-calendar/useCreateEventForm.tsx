@@ -33,7 +33,6 @@ const useCreateEventForm = () => {
         .min(10, "Description cannot less than 10 char"),
     date: yup.string().required('Date is required'),
     location: yup.string().required('Location is required'),
-    link: yup.string().nullable(),
   });
 
   const {

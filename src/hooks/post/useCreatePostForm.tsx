@@ -61,16 +61,12 @@ const useCreatePostForm = () => {
         text: data.text,
         images: [],
         file: "",
-        user_id: data.user_id,
-        by_admin: true,
-        created_at: new Date().toISOString(),
       };
       if (data.image1.image_link !== "") {
         const image = await uploadFile(
           accessToken!,
           data.image1.image_link[0] as File
         );
-        console.log(image);
 
         payload.images.push(image);
       } else {
@@ -99,7 +95,6 @@ const useCreatePostForm = () => {
       }
       if (data.file !== "") {
         const file = await uploadFile(accessToken!, data.file[0] as File);
-        console.log(file);
 
         payload.file = file;
       }

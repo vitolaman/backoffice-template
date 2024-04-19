@@ -1,19 +1,21 @@
 import {
-  Event,
-  EventList,
   EventListReq,
   EventCalendarRes,
   CreateEventForm,
   UpdateEventForm,
-  EventDetailRes
+  EventDetailRes,
 } from "_interfaces/event-calendar.interfaces";
 import { Api } from "services/api";
 
 export const eventCalendarApi = Api.injectEndpoints({
   endpoints: (build) => ({
     EventList: build.query<EventCalendarRes, EventListReq>({
-      query: (param) =>
-        `event/?page=${param.page}&limit=${param.limit}&search=${param.search}`,
+      query: (params) => {
+        return {
+          url: `event/`,
+          params,
+        };
+      },
       keepUnusedDataFor: 0,
     }),
     EventDetail: build.query<EventDetailRes, { id: string }>({
@@ -39,7 +41,7 @@ export const eventCalendarApi = Api.injectEndpoints({
         };
       },
     }),
-    
+
     DeleteEvent: build.mutation<string, { id: string }>({
       query(body) {
         return {

@@ -9,8 +9,12 @@ import { Api } from "services/api";
 export const postApi = Api.injectEndpoints({
   endpoints: (build) => ({
     PostList: build.query<PostListRes, PostListReq>({
-      query: (param) =>
-        `post/post/admin?search=${param.search}&limit=${param.limit}&page=${param.page}`,
+      query: (params) => {
+        return {
+          url: `post/post/admin`,
+          params,
+        };
+      },
       keepUnusedDataFor: 0,
     }),
     PostDetail: build.query<{ data: PostList }, { id: string }>({
@@ -39,6 +43,15 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
+    UpdatePost: build.mutation<string, { id: string; body: CreatePostReq }>({
+      query({ id, body }) {
+        return {
+          url: `post/post/admin/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -48,4 +61,5 @@ export const {
   useDeletePostMutation,
   usePostDetailQuery,
   usePostListQuery,
+  useUpdatePostMutation,
 } = postApi;

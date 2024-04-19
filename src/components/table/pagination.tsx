@@ -12,21 +12,21 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
 }) => {
-  const [inputPage, setInputPage] = useState<any>(currentPage);
+  const [inputPage, setInputPage] = useState<number>(currentPage ?? 0);
 
   useEffect(() => {
     setInputPage(currentPage);
   }, [currentPage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setInputPage(e.target.value);
+    setInputPage(+e.target.value);
   };
 
   const handlePageChange = (): void => {
     if (inputPage >= 1 && inputPage <= totalPages) {
       onPageChange(inputPage);
     } else {
-      setInputPage(currentPage);
+      setInputPage(currentPage ?? 0);
     }
   };
 
@@ -109,7 +109,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <div className="flex-1">
             <input
               onChange={handleInputChange}
-              value={inputPage}
+              value={inputPage ?? 0}
               type="text"
               className="rounded-full border border-[#3AC4A0] block w-full px-2 text-[#262626] text-sm h-[23px] placeholder:text-[#BDBDBD] focus:outline-0 disabled:bg-[#E9E9E9]"
             />

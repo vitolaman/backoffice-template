@@ -35,27 +35,27 @@ const SavePopUp: React.FC<ErrorPopupProps> = ({
             height="68"
             rx="34"
             fill="#BAFBD0"
-            fill-opacity="0.2"
+            fillOpacity="0.2"
           />
           <path
             d="M34 54C45.0457 54 54 45.0457 54 34C54 22.9543 45.0457 14 34 14C22.9543 14 14 22.9543 14 34C14 45.0457 22.9543 54 34 54Z"
             fill="#27A590"
-            fill-opacity="0.2"
+            fillOpacity="0.2"
             stroke="#27A590"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M42 34L34 26L26 34"
             stroke="#27A590"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M34 42V26"
             stroke="#27A590"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <circle cx="53" cy="8" r="2" fill="#27A590" />
           <circle cx="7" cy="47" r="2" fill="#27A590" />
@@ -64,8 +64,8 @@ const SavePopUp: React.FC<ErrorPopupProps> = ({
             fill="#1A857D"
           />
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M61 37C60.996 35.8968 60.1021 35.0037 59 35.0037C60.1046 35.0037 61 34.1066 61 33C61.004 34.1032 61.8979 34.9963 63 34.9963C61.8954 34.9963 61 35.8934 61 37Z"
             fill="#1A857D"
           />
