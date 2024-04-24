@@ -240,7 +240,7 @@ export default function ForumPage(): React.ReactElement {
               />
               <div className="relative">
                 <label className="absolute -top-6 font-semibold">
-                  Start Date:
+                  Post From:
                 </label>
                 <input
                   type="date"
@@ -256,7 +256,7 @@ export default function ForumPage(): React.ReactElement {
               </div>
               <div className="relative">
                 <label className="absolute -top-6 font-semibold">
-                  End Date:
+                  Post To:
                 </label>
                 <input
                   type="date"
