@@ -10,7 +10,7 @@ import { data as postData } from "data/post";
 import { UserList } from "data/user";
 import useCreateCommentForm from "hooks/comment/useCreateCommentForm";
 import { useEffect, useState } from "react";
-import { Button } from "react-daisyui";
+import { Button, Textarea } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
@@ -25,8 +25,15 @@ const CreateComment = () => {
   >([]);
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
-  const { errors, setFocus, isLoading, handleCreate, control, reset } =
-    useCreateCommentForm(type as string);
+  const {
+    errors,
+    register,
+    setFocus,
+    isLoading,
+    handleCreate,
+    control,
+    reset,
+  } = useCreateCommentForm(type as string);
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0] as keyof CreateCommentForm;
@@ -121,20 +128,7 @@ const CreateComment = () => {
         <div className="flex flex-col gap-2 mt-10">
           <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold text-lg">Comment Content</label>
-            <Controller
-              control={control}
-              name="text"
-              render={({ field: { value, onChange } }) => (
-                <MDEditor
-                  height={200}
-                  commands={[...commands.getCommands()]}
-                  value={value}
-                  onChange={onChange}
-                  highlightEnable={false}
-                  preview="live"
-                />
-              )}
-            />
+            <Textarea {...register("text")} className="w-full" rows={5} />
             <ValidationError error={errors.text} />{" "}
           </div>
         </div>
