@@ -4,13 +4,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useCreateCommentMutation } from "services/modules/comment";
+import {
+  useCreateCommentMutation,
+  useForumCreateCommentMutation,
+} from "services/modules/comment";
 import { CreateCommentForm } from "_interfaces/comment.interface";
 
-const useCreateCommentForm = () => {
+const useCreateCommentForm = (type: string) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [createComment] = useCreateCommentMutation();
+  const [createForumComment] = useForumCreateCommentMutation();
 
   const schema = yup.object().shape({
     text: yup
@@ -40,7 +44,11 @@ const useCreateCommentForm = () => {
         text: data.text,
         postId: data.postId,
       };
-      await createComment(payload).unwrap();
+      if (type === "forum") {
+        await createForumComment(payload).unwrap();
+      } else {
+        await createComment(payload).unwrap();
+      }
       navigate(-1);
     } catch (error) {
       errorHandler(error);

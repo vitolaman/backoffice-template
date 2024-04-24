@@ -1,35 +1,37 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
-import { CreateCommentForm } from "_interfaces/comment.interface";
+import { CreateForumForm } from "_interfaces/forum.interfaces";
 import ContentContainer from "components/container";
-import DetailForumCard from "components/forum/DetailForumCard";
+import CInput from "components/input";
 import CancelPopUp from "components/modal/other/Cancel";
 import SavePopUp from "components/modal/other/Save";
-import DetailPostCard from "components/post/DetailPostCard";
+import ImageInput from "components/post/ImageInput";
 import ValidationError from "components/validation/error";
-import { data as postData } from "data/post";
-import { UserList } from "data/user";
-import useCreateCommentForm from "hooks/comment/useCreateCommentForm";
+import useCreateForumForm from "hooks/forum/useCreateForumForm";
+import useFilePreview from "hooks/shared/useFilePreview";
 import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
 import { Controller } from "react-hook-form";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export const createCommentRouteName = "comment/create/:id";
-const CreateComment = () => {
+export const createForumRouteName = "forum/create";
+const CreateForum = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const type = searchParams.get("type");
-  const [userListUpdated, setUserListUpdated] = useState<
-    { label: string; value: string }[]
-  >([]);
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
-  const { errors, setFocus, isLoading, handleCreate, control, reset } =
-    useCreateCommentForm(type as string);
+  const {
+    register,
+    errors,
+    setFocus,
+    isLoading,
+    watch,
+    handleCreate,
+    control,
+  } = useCreateForumForm();
+  const image = watch("image.image_link");
+  const [imagePreview] = useFilePreview(image as FileList);
 
   useEffect(() => {
-    const firstError = Object.keys(errors)[0] as keyof CreateCommentForm;
+    const firstError = Object.keys(errors)[0] as keyof CreateForumForm;
     if (firstError) {
       setFocus(firstError);
       const element = errors[firstError]?.ref;
@@ -43,10 +45,6 @@ const CreateComment = () => {
     }
   }, [errors, setFocus]);
 
-  useEffect(() => {
-    reset((prevState) => ({ ...prevState, postId: id as string }));
-  }, [id]);
-
   const handleCancelPopup = () => {
     setIsCancelPopupOpen(!isCancelPopupOpen);
   };
@@ -55,24 +53,11 @@ const CreateComment = () => {
     setIsSavePopupOpen(!isSavePopupOpen);
   };
 
-  useEffect(() => {
-    if (UserList && UserList.length > 0) {
-      const newPromoCodeList = UserList.map((item, i) => ({
-        label: `${item.name} - ${item.email}`,
-        value: item.id,
-        key: i,
-      }));
-      setUserListUpdated(newPromoCodeList);
-    }
-  }, [UserList]);
-
   return (
     <ContentContainer>
       <form onSubmit={handleCreate}>
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <h3 className="text-2xl text-[#262626] font-bold">{`Create Comment for this ${
-            type === "forum" ? "Forum Post" : "Post"
-          }`}</h3>
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <h3 className="text-2xl text-[#262626] font-bold">{`Create Forum Post`}</h3>
           <div className="flex items-center justify-between gap-4 ml-4">
             <Button
               type="button"
@@ -86,13 +71,13 @@ const CreateComment = () => {
             </Button>
             <CancelPopUp
               isOpen={isCancelPopupOpen}
-              data={"Create Comment"}
+              data={"Create Forum Post"}
               onClose={handleCancelPopup}
               onEdit={() => {
                 navigate(-1);
                 handleCancelPopup();
               }}
-              menu={"Comment"}
+              menu={"Forum Post"}
             />
             <Button
               type="button"
@@ -112,18 +97,72 @@ const CreateComment = () => {
               onEdit={() => {
                 setIsSavePopupOpen(false);
               }}
-              menu={"Comment"}
+              menu={"Forum Post"}
             />
           </div>
         </div>
-        <div />
-        {type === "forum" ? <DetailForumCard /> : <DetailPostCard />}
-        <div className="flex flex-col gap-2 mt-10">
+        <div className="mt-6">
+          <label htmlFor="title" className="block font-semibold mb-4">
+            Title
+          </label>
+          <CInput
+            type="text"
+            id="title"
+            {...register("title")}
+            error={errors.title}
+          />
+        </div>
+        <div className="flex justify-between items-center mt-6">
+          <h1 className="font-semibold text-lg">Upload Photo</h1>
+        </div>
+        <div className="grid grid-cols-2 gap-5 mt-4">
+          <ImageInput
+            isWide={true}
+            imagePreview={imagePreview}
+            register={register("image.image_link")}
+          />
+        </div>
+        <div className="mt-6">
+          <label htmlFor="date" className="block font-semibold mb-4">
+            Date
+          </label>
+          <CInput
+            type="date"
+            id="date"
+            {...register("date")}
+            error={errors.date}
+          />
+        </div>
+        <div className="mt-6">
+          <label htmlFor="location" className="block font-semibold mb-4">
+            Location
+          </label>
+          <CInput
+            type="text"
+            id="location"
+            {...register("location")}
+            placeholder="Enter location..."
+            error={errors.location}
+          />
+        </div>
+        <div className="mt-6">
+          <label htmlFor="moderator" className="block font-semibold mb-4">
+            Moderator
+          </label>
+          <CInput
+            type="text"
+            id="moderator"
+            {...register("moderator")}
+            placeholder="Enter Moderator Name"
+            error={errors.moderator}
+          />
+        </div>
+        <div className="flex flex-col gap-2 mt-6">
           <div data-color-mode="light" className="flex flex-col gap-2">
-            <label className="font-semibold text-lg">Comment Content</label>
+            <label className="font-semibold text-lg">Post Content</label>
             <Controller
               control={control}
-              name="text"
+              name="description"
               render={({ field: { value, onChange } }) => (
                 <MDEditor
                   height={200}
@@ -135,7 +174,7 @@ const CreateComment = () => {
                 />
               )}
             />
-            <ValidationError error={errors.text} />{" "}
+            <ValidationError error={errors.description} />
           </div>
         </div>
       </form>
@@ -143,4 +182,4 @@ const CreateComment = () => {
   );
 };
 
-export default CreateComment;
+export default CreateForum;

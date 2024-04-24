@@ -34,6 +34,33 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
+    ForumCommentList: build.query<CommentListRes, CommentListReq>({
+      query: (param) =>
+        `forum/comment/admin?id=${param.id}&limit=${param.limit}&page=${param.page}`,
+      keepUnusedDataFor: 0,
+    }),
+    ForumDeleteComment: build.mutation<string, { id: string }>({
+      query(body) {
+        return {
+          url: `forum/comment/admin/${body.id}`,
+          method: "DELETE",
+          body: {
+            ...body,
+          },
+        };
+      },
+    }),
+    ForumCreateComment: build.mutation<string, CreateCommentForm>({
+      query(body) {
+        return {
+          url: `forum/comment/admin`,
+          method: "POST",
+          body: {
+            ...body,
+          },
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -42,4 +69,7 @@ export const {
   useCommentListQuery,
   useCreateCommentMutation,
   useDeleteCommentMutation,
+  useForumCommentListQuery,
+  useForumCreateCommentMutation,
+  useForumDeleteCommentMutation,
 } = postApi;

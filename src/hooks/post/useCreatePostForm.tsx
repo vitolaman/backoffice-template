@@ -7,7 +7,11 @@ import { useState } from "react";
 import { useAppSelector } from "store";
 import { uploadFile } from "services/modules/file";
 import { useCreatePostMutation } from "services/modules/post";
-import { CreatePostForm, CreatePostReq } from "_interfaces/post.interface";
+import {
+  CreatePostForm,
+  CreatePostReq,
+  UpdatePostForm,
+} from "_interfaces/post.interface";
 
 const useCreatePostForm = () => {
   const navigate = useNavigate();
@@ -30,73 +34,43 @@ const useCreatePostForm = () => {
     control,
     setFocus,
     watch,
-  } = useForm<CreatePostForm>({
+  } = useForm<UpdatePostForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues: {
-      image1: {
-        image_link: "",
-        image_url: "",
-      },
-      image2: {
-        image_link: "",
-        image_url: "",
-      },
-      image3: {
-        image_link: "",
-        image_url: "",
-      },
-      image4: {
-        image_link: "",
-        image_url: "",
-      },
-      file: "",
+      images: [{ link: "" }],
+      file: { link: "" },
     },
   });
 
-  const create = async (data: CreatePostForm) => {
+  const create = async (data: UpdatePostForm) => {
     try {
       setIsLoading(true);
+      const imagesTemp = data.images.map((item) => item.link!);
       const payload: CreatePostReq = {
         text: data.text,
-        images: [],
-        file: "",
+        images: imagesTemp,
+        file: data.file.link!,
       };
-      if (data.image1.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.image1.image_link[0] as File
-        );
-
-        payload.images.push(image);
-      } else {
-        payload.images = [];
-      }
-      if (data.image2.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.image1.image_link[0] as File
-        );
-        payload.images.push(image);
-      }
-      if (data.image3.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.image1.image_link[0] as File
-        );
-        payload.images.push(image);
-      }
-      if (data.image4.image_link !== "") {
-        const image = await uploadFile(
-          accessToken!,
-          data.image1.image_link[0] as File
-        );
-        payload.images.push(image);
-      }
-      if (data.file !== "") {
-        const file = await uploadFile(accessToken!, data.file[0] as File);
+      if (data.file.file && data.file.file[0]) {
+        const file = await uploadFile(accessToken!, data.file.file[0] as File);
 
         payload.file = file;
+      }
+      const promises: Promise<string>[] = [];
+      const newImage: number[] = [];
+      data.images.forEach((item, i) => {
+        if (item.file && item.file[0]) {
+          newImage.push(i);
+          promises.push(uploadFile(accessToken!, item.file[0]));
+        }
+      });
+      if (promises.length > 0) {
+        const images = await Promise.all(promises);
+        images.forEach((item, i) => {
+          imagesTemp[newImage[i]] = item;
+        });
+        payload.images = imagesTemp;
       }
       await createPost(payload).unwrap();
       navigate(-1);

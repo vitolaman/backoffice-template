@@ -1,3 +1,4 @@
+import { forumRouteName } from "pages/forum/index.page";
 import { postRouteName } from "pages/post/index.page";
 
 interface SubMenuItem {
@@ -23,6 +24,10 @@ const menuItems: MenuItem[] = [
   {
     name: "Event Calendar",
     path: "/event",
+  },
+  {
+    name: "Discussion Forum",
+    path: forumRouteName,
   },
 ];
 

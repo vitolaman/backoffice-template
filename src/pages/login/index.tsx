@@ -10,6 +10,7 @@ import { saveTokenAuth } from "store/auth";
 import { useLoginMutation } from "services/modules/auth";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const Login = () => {
   const [hidePassword, setHidePassword] = useState(true);
@@ -59,12 +60,31 @@ const Login = () => {
                   <ValidationError error={errors.email} />
                 </div>
                 <div className="w-full">
-                  <Input
-                    {...register("password")}
-                    className="text-base font-semibold text-[#262626] w-full"
-                    placeholder="Input Password"
-                    type="password"
-                  />
+                  <div className="relative">
+                    <Input
+                      {...register("password")}
+                      className="text-base font-semibold text-[#262626] w-full"
+                      placeholder="Input Password"
+                      type={hidePassword ? "password" : "text"}
+                    />
+                    <div className="absolute right-4 top-3 text-neutral-500">
+                      {hidePassword ? (
+                        <EyeIcon
+                          className="w-6 h-6 cursor-pointer"
+                          onClick={() => {
+                            setHidePassword(false);
+                          }}
+                        />
+                      ) : (
+                        <EyeSlashIcon
+                          className="w-6 h-6 cursor-pointer"
+                          onClick={() => {
+                            setHidePassword(true);
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <ValidationError error={errors.password} />
                 </div>
               </div>
