@@ -7,12 +7,16 @@ import { useState } from "react";
 import { useAppSelector } from "store";
 import { uploadFile } from "services/modules/file";
 import { CreateForumForm, CreateForumReq } from "_interfaces/forum.interfaces";
-import { useCreateForumPostMutation } from "services/modules/forum";
+import {
+  useCreateForumPostMutation,
+  useUpdateForumPostMutation,
+} from "services/modules/forum";
 
-const useCreateForumForm = () => {
+const useCreateForumForm = (id?: string) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [createForumPost] = useCreateForumPostMutation();
+  const [updateForumPost] = useUpdateForumPostMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
   const schema = yup.object().shape({
@@ -31,6 +35,7 @@ const useCreateForumForm = () => {
     control,
     setFocus,
     watch,
+    reset,
   } = useForm<CreateForumForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -47,10 +52,11 @@ const useCreateForumForm = () => {
       setIsLoading(true);
       const payload: CreateForumReq = {
         date: data.date,
-        image: "",
+        image: id ? data.image.image_url : "",
         description: data.description,
         location: data.location,
         title: data.title,
+        moderator: data.moderator,
       };
       if (data.image.image_link !== "") {
         const images = await uploadFile(
@@ -59,10 +65,12 @@ const useCreateForumForm = () => {
         );
 
         payload.image = images;
-      } else {
-        payload.image = "";
       }
-      await createForumPost(payload).unwrap();
+      if (id) {
+        await updateForumPost({ id: id, body: payload }).unwrap();
+      } else {
+        await createForumPost(payload).unwrap();
+      }
       navigate(-1);
     } catch (error) {
       errorHandler(error);
@@ -81,6 +89,7 @@ const useCreateForumForm = () => {
     control,
     isLoading,
     watch,
+    reset,
   };
 };
 

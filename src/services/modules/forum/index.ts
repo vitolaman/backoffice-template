@@ -46,7 +46,7 @@ export const forumApi = Api.injectEndpoints({
     }),
     UpdateForumPost: build.mutation<
       string,
-      { id: string; body: CreatePostReq }
+      { id: string; body: CreateForumReq }
     >({
       query({ id, body }) {
         return {
@@ -65,4 +65,5 @@ export const {
   useDeleteForumPostMutation,
   useForumDetailQuery,
   useCreateForumPostMutation,
+  useUpdateForumPostMutation,
 } = forumApi;

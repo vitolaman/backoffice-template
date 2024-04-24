@@ -23,6 +23,7 @@ export interface Forum {
   date: string;
   created_at: string;
   admin: Admin;
+  moderator: string;
 }
 
 export interface Admin {
@@ -44,6 +45,7 @@ export interface CreateForumReq {
   image: string;
   location: string;
   date: string;
+  moderator: string;
 }
 
 export interface CreateForumForm {

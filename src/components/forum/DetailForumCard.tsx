@@ -39,7 +39,7 @@ export default function DetailForumCard(): React.ReactElement {
               />
               <div className="flex flex-col">
                 <p className="text-lg font-semibold text-black">Moderator</p>
-                <p className="text-sm font-medium">{data?.data.admin.email}</p>
+                <p className="text-sm font-medium">{data?.data.moderator}</p>
               </div>
             </div>
             <div className="flex ml-2 items-center gap-4">

@@ -36,7 +36,7 @@ export const postApi = Api.injectEndpoints({
     }),
     ForumCommentList: build.query<CommentListRes, CommentListReq>({
       query: (param) =>
-        `forum/comment/admin/{id}?id=${param.id}&limit=${param.limit}&page=${param.page}`,
+        `forum/comment/admin?id=${param.id}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
     ForumDeleteComment: build.mutation<string, { id: string }>({

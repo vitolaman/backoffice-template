@@ -126,6 +126,10 @@ export default function ForumPage(): React.ReactElement {
       label: "Total Like",
     },
     {
+      fieldId: "moderator",
+      label: "Moderator",
+    },
+    {
       fieldId: "admin",
       label: "Posted By",
       render: (data) => <p>{data?.admin.email}</p>,
@@ -171,7 +175,7 @@ export default function ForumPage(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  navigate(`/forum/edit/${data?.id}`);
+                  navigate(`/forum/update/${data?.id}`);
                 }}
               >
                 <label
