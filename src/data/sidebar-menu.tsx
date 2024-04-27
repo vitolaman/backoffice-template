@@ -1,4 +1,5 @@
 import { postRouteName } from "pages/post/index.page";
+import { userRouteName } from "pages/user-management/index.pages";
 
 interface SubMenuItem {
   name: string;
@@ -24,6 +25,10 @@ const menuItems: MenuItem[] = [
     name: "Event Calendar",
     path: "/event",
   },
+  {
+    name: "User",
+    path: userRouteName,
+  }
 ];
 
 export { menuItems };

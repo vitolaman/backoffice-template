@@ -12,6 +12,8 @@ import DetailEventPage, {
   detailEventRouteName,
 } from "pages/event-calendar/detail.pages";
 import UpdatePost, { editPostRouteName } from "pages/post/update.page";
+import UserPage, { userRouteName } from "pages/user-management/index.pages";
+import DetailUserPage, { detailUserRouteName } from "pages/user-management/detail.pages";
 
 const protectedRoutes: RouteObject[] = [
   { path: "*", element: <Navigate to="/post" /> },
@@ -27,6 +29,8 @@ const protectedRoutes: RouteObject[] = [
       { path: createCommentRouteName, element: <CreateComment /> },
       { path: "/event", element: <EventCalendarPage /> },
       { path: detailEventRouteName, element: <DetailEventPage /> },
+      { path: userRouteName, element: <UserPage />},
+      { path: detailUserRouteName, element: <DetailUserPage />},
     ],
   },
 ];
