@@ -1,3 +1,4 @@
+import { forumRouteName } from "pages/forum/index.page";
 import { postRouteName } from "pages/post/index.page";
 import { userRouteName } from "pages/user-management/index.pages";
 
@@ -28,7 +29,11 @@ const menuItems: MenuItem[] = [
   {
     name: "User",
     path: userRouteName,
-  }
+  },
+  {
+    name: "Discussion Forum",
+    path: forumRouteName,
+  },
 ];
 
 export { menuItems };
