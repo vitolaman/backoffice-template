@@ -1,5 +1,6 @@
 import { forumRouteName } from "pages/forum/index.page";
 import { postRouteName } from "pages/post/index.page";
+import { userRouteName } from "pages/user-management/index.pages";
 
 interface SubMenuItem {
   name: string;
@@ -28,6 +29,10 @@ const menuItems: MenuItem[] = [
   {
     name: "Discussion Forum",
     path: forumRouteName,
+  },
+  {
+    name: "User",
+    path: userRouteName,
   },
 ];
 

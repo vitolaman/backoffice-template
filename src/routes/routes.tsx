@@ -12,6 +12,8 @@ import DetailEventPage, {
   detailEventRouteName,
 } from "pages/event-calendar/detail.pages";
 import UpdatePost, { editPostRouteName } from "pages/post/update.page";
+import UserPage, { userRouteName } from "pages/user-management/index.pages";
+import DetailUserPage, { detailUserRouteName } from "pages/user-management/detail.pages";
 import ForumPage, { forumRouteName } from "pages/forum/index.page";
 import DetailForumPage, { detailForumRouteName } from "pages/forum/detail.page";
 import CreateForum, { createForumRouteName } from "pages/forum/create.page";
@@ -31,6 +33,8 @@ const protectedRoutes: RouteObject[] = [
       { path: createCommentRouteName, element: <CreateComment /> },
       { path: "/event", element: <EventCalendarPage /> },
       { path: detailEventRouteName, element: <DetailEventPage /> },
+      { path: userRouteName, element: <UserPage />},
+      { path: detailUserRouteName, element: <DetailUserPage />},
       { path: forumRouteName, element: <ForumPage /> },
       { path: detailForumRouteName, element: <DetailForumPage /> },
       { path: createForumRouteName, element: <CreateForum /> },
