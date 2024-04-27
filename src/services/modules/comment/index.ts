@@ -1,4 +1,5 @@
 import {
+  CommentForumListRes,
   CommentListReq,
   CommentListRes,
   CreateCommentForm,
@@ -34,9 +35,9 @@ export const postApi = Api.injectEndpoints({
         };
       },
     }),
-    ForumCommentList: build.query<CommentListRes, CommentListReq>({
+    ForumCommentList: build.query<CommentForumListRes, CommentListReq>({
       query: (param) =>
-        `forum/comment/admin?id=${param.id}&limit=${param.limit}&page=${param.page}`,
+        `forum/comment/admin/${param.id}?limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
     ForumDeleteComment: build.mutation<string, { id: string }>({

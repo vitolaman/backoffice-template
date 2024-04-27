@@ -8,7 +8,7 @@ export interface Comment {
 
 export interface CommentListRes {
   data: Comment[];
-  metadata: Metadata;
+  meta: Metadata;
 }
 
 export interface CommentListReq {
@@ -20,4 +20,9 @@ export interface CommentListReq {
 export interface CreateCommentForm {
   text: string;
   postId: string;
+}
+
+export interface CommentForumListRes {
+  data: Comment[];
+  meta: Metadata;
 }
