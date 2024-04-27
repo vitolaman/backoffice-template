@@ -27,12 +27,12 @@ const menuItems: MenuItem[] = [
     path: "/event",
   },
   {
-    name: "User",
-    path: userRouteName,
-  },
-  {
     name: "Discussion Forum",
     path: forumRouteName,
+  },
+  {
+    name: "User",
+    path: userRouteName,
   },
 ];
 
