@@ -179,10 +179,10 @@ export default function DetailPostPage(): React.ReactElement {
             </div>
           </div>
           <div className="flex flex-col">
-            {data!?.metadata ? (
+            {data!?.meta ? (
               <Pagination
-                currentPage={data!?.metadata.currentPage}
-                totalPages={data!?.metadata.totalPage}
+                currentPage={data!?.meta.currentPage}
+                totalPages={data!?.meta.totalPages}
                 onPageChange={handlePageChange}
               />
             ) : null}
