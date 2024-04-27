@@ -10,6 +10,7 @@ import { saveTokenAuth } from "store/auth";
 import { useLoginMutation } from "services/modules/auth";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const Login = () => {
   const [hidePassword, setHidePassword] = useState(true);
@@ -19,9 +20,9 @@ const Login = () => {
   const navigate = useNavigate();
   const handleLogin = async (data: LoginReqI) => {
     try {
-      // const res = await login(data).unwrap();
-      // dispatch(saveTokenAuth(res));
-      if (data.email === "admin@gmail.com" && data.password === "Password123") {
+      const res = await login(data).unwrap();
+      dispatch(saveTokenAuth(res));
+      if (res) {
         navigate("/post");
       }
     } catch (error) {
@@ -31,11 +32,11 @@ const Login = () => {
 
   return (
     <div>
-      <div className="bg-[#27A590] flex flex-col w-screen h-screen overflow-hidden">
+      <div className="bg-spix-300 flex flex-col w-screen h-screen overflow-hidden">
         <div className="w-[906px] h-[906px] relative mx-auto">
           <img
             src={Logo}
-            className="absolute z-50 w-[120px] h-[45px] left-0 right-0 top-[10vh] mx-auto"
+            className="absolute z-50 w-[200px] h-[45px] left-0 right-0 top-[10vh] mx-auto"
             alt=""
           />
           <div className="bg-white formLogin w-[450px] h-[424px] absolute mx-auto left-0 right-0 rounded-xl shadow-xl top-[22vh] z-[100]">
@@ -59,19 +60,34 @@ const Login = () => {
                   <ValidationError error={errors.email} />
                 </div>
                 <div className="w-full">
-                  <Input
-                    {...register("password")}
-                    className="text-base font-semibold text-[#262626] w-full"
-                    placeholder="Input Password"
-                    type="password"
-                  />
+                  <div className="relative">
+                    <Input
+                      {...register("password")}
+                      className="text-base font-semibold text-[#262626] w-full"
+                      placeholder="Input Password"
+                      type={hidePassword ? "password" : "text"}
+                    />
+                    <div className="absolute right-4 top-3 text-neutral-500">
+                      {hidePassword ? (
+                        <EyeIcon
+                          className="w-6 h-6 cursor-pointer"
+                          onClick={() => {
+                            setHidePassword(false);
+                          }}
+                        />
+                      ) : (
+                        <EyeSlashIcon
+                          className="w-6 h-6 cursor-pointer"
+                          onClick={() => {
+                            setHidePassword(true);
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
                   <ValidationError error={errors.password} />
                 </div>
               </div>
-              <section className="flex flex-row text-center align-middle items-center gap-2">
-                <Checkbox />
-                <p>Remember Me</p>
-              </section>
               <Button
                 type="submit"
                 shape="circle"

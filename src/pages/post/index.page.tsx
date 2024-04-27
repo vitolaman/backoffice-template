@@ -1,6 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import React, { useEffect, useState } from "react";
-import { PiWarningCircleFill } from "react-icons/pi";
+import React, { useState } from "react";
 import {
   Menu,
   MenuHandler,
@@ -8,111 +6,53 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-daisyui";
+import { Button, Select } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
-import WarningMaxPopUp from "components/modal/banner/WarningMaxPopUp";
-import PopUpImage from "components/modal/banner/PopUpImage";
-import {
-  BannerList,
-  MainBannerReq,
-  PostList,
-} from "_interfaces/post.interface";
-import {
-  useBannerListQuery,
-  useChangeStatusBannerMutation,
-  useDeleteBannerMutation,
-} from "services/modules/post";
+import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
-import { CiEdit } from "react-icons/ci";
 import { errorHandler } from "services/errorHandler";
-import { data } from "data/post";
 import moment from "moment";
+import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
+import PDFViewer from "components/post/PDFViewer";
+import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
+import DeletePopUp from "components/modal/other/Delete";
+import { FaRegFilePdf } from "react-icons/fa";
+import CInput from "components/input";
+import ContentContainer from "components/container";
 
 export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
-  const push = useNavigate();
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
-  const [warningMessage, setWarningMessage] = useState<string | null>(null);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useState<MainBannerReq>({
+  const [searchParams, setSearchParams] = useState<PostListReq>({
     search: "",
-    status: "",
-    type: "main",
     limit: 10,
     page: 1,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const { refetch } = useBannerListQuery(searchParams);
-  const [changeStatusBanner, { error }] = useChangeStatusBannerMutation();
-  const [deleteBanner] = useDeleteBannerMutation();
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
-
-  const handleCreateBanner = (): void => {
-    void push("/banner/main-banner/create");
+  const [selectedPost, setSelectedPost] = useState<string>("");
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [modalPDF, setModalPDF] = useState<boolean>(false);
+  const [file, setFile] = useState("");
+  const { data, isLoading, refetch } = usePostListQuery(searchParams);
+  const [deletePost] = useDeletePostMutation();
+  const handleDeletePopUp = () => {
+    setIsDeletePopupOpen(!isDeletePopupOpen);
+  };
+  const handleCreatePost = (): void => {
+    void navigate("/post/create");
   };
 
-  const handleEditBanner = (id: string): void => {
-    void push(`/banner/main-banner/update/${id}`);
-  };
-
-  const handleClosePopup = () => {
-    setIsWarningPopupOpen(false);
-    setIsImagePopupOpen(false);
-  };
-
-  const handleOpenImage = (url: string) => {
-    setSelectedImageUrl(url);
-    setIsImagePopupOpen(true);
-  };
-
-  const handleUpdateStatusBanner = async (
-    id: string,
-    status: boolean
-  ): Promise<void> => {
-    try {
-      const statusUpdated = { id, is_active: !status };
-      await changeStatusBanner(statusUpdated);
-      refetch();
-    } catch (error) {
-      errorHandler(error);
-    }
-  };
-
-  const handleDeleteBanner = async (id: string): Promise<void> => {
+  const handleDeletePost = async (id: string): Promise<void> => {
     try {
       const statusUpdated = { id };
-      await deleteBanner(statusUpdated);
+      await deletePost(statusUpdated);
       refetch();
     } catch (error) {
       errorHandler(error);
     }
   };
-
-  useEffect(() => {
-    if (error) {
-      setIsWarningPopupOpen(true);
-      const errorMessage = (
-        error as { data: { message: string }; status: number }
-      ).data?.message;
-      if (errorMessage === "Cannot be more than 10") {
-        setWarningMessage("Maximal Banner Active is 10");
-      } else if (errorMessage === "Cannot be less than 1") {
-        setWarningMessage("Sorry, but there must be 1 Banner to be Set Active");
-      } else {
-        setWarningMessage(
-          "An error occurred while creating the banner. Please try again later."
-        );
-      }
-    }
-  }, [error]);
 
   const header: Columns<PostList>[] = [
     {
@@ -120,43 +60,22 @@ export default function PostPage(): React.ReactElement {
       label: "No",
     },
     {
-      fieldId: "id",
-      label: "Post ID",
-    },
-    {
-      fieldId: "name",
-      label: "Publisher Name",
-      render: (data) => <p>{data?.owner.name}</p>,
-    },
-    {
       fieldId: "by_admin",
       label: "Published By",
-      render: (data) => <p>{data?.by_admin ? "Admin" : "Personal"}</p>,
-    },
-    {
-      fieldId: "owner",
-      label: "Business Sector",
-      render: (data) => <p>{data?.owner.business_sector}</p>,
-    },
-    {
-      fieldId: "image_url",
-      label: "Image",
       render: (data) => (
-        <img
-          className="mt-1 me-3"
-          src={data?.images[0]}
-          alt="Success"
-          width={100}
-          height={100}
-          onClick={() => handleOpenImage(data?.images[0] as string)}
-        />
+        <p key={data?.id}>{data?.by_admin ? "Admin" : "Personal"}</p>
       ),
     },
     {
       fieldId: "text",
       label: "Post Content",
       render: (data) => (
-        <p>
+        <p
+          onClick={() => {
+            navigate(`/post/${data?.id}`);
+          }}
+          className="underline hover:text-blue-300 cursor-pointer"
+        >
           {data?.text !== undefined &&
             (data.text.length > 20
               ? data?.text.slice(0, 15) + "..."
@@ -167,11 +86,34 @@ export default function PostPage(): React.ReactElement {
     {
       fieldId: "owner",
       label: "Posted At",
-      render: (data) => <p>{moment(data?.created_at).format("MMM Do YY")}</p>,
+      render: (data) => (
+        <p>{moment(data?.created_at).format("MMM Do, YYYY")}</p>
+      ),
     },
     {
       fieldId: "likes",
       label: "Total Like",
+    },
+    {
+      fieldId: "file",
+      label: "Document",
+      render: (data) => (
+        <div>
+          {data?.file === null ? (
+            <p>-----</p>
+          ) : (
+            <Button
+              onClick={() => {
+                setModalPDF(true);
+                setFile(data?.file as string);
+              }}
+              className="rounded hover:bg-transparent w-full h-full border-none relative z-50 text-center flex justify-center items-center"
+            >
+              <FaRegFilePdf />
+            </Button>
+          )}
+        </div>
+      ),
     },
     {
       fieldId: "id",
@@ -182,7 +124,7 @@ export default function PostPage(): React.ReactElement {
             <MenuHandler>
               <Button
                 size="sm"
-                className="rounded text-center text-lg hover:bg-transparent text-[#3AC4A0] border-none"
+                className="rounded text-center text-lg hover:bg-transparent text-san-juan border-none"
                 onClick={() => {
                   if (isDropdownOpen === data?.id) {
                     setIsDropdownOpen(null);
@@ -197,24 +139,42 @@ export default function PostPage(): React.ReactElement {
             <MenuList placeholder={""}>
               <MenuItem
                 placeholder={""}
-                className="p-0 w-full"
+                className="p-0"
                 onClick={() => {
-                  void handleEditBanner(data?.id as string);
+                  navigate(`/post/${data?.id}`);
                 }}
               >
                 <label
                   htmlFor="item-1"
-                  className="flex cursor-pointer items-center gap-2 p-2"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
                 >
-                  <CiEdit className="mt-1 me-3 h-4 w-4" />
-                  Edit Post
+                  <EyeIcon className="mt-1 me-3 h-4 w-4" />
+                  See Detail
                 </label>
               </MenuItem>
+              {data?.by_admin && (
+                <MenuItem
+                  placeholder={""}
+                  className="p-0"
+                  onClick={() => {
+                    navigate(`/post/edit/${data?.id}`);
+                  }}
+                >
+                  <label
+                    htmlFor="item-1"
+                    className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                  >
+                    <PencilIcon className="mt-1 me-3 h-4 w-4" />
+                    Edit Post
+                  </label>
+                </MenuItem>
+              )}
               <MenuItem
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeleteBanner(data?.id as string);
+                  setSelectedPost(data?.id as string);
+                  handleDeletePopUp();
                 }}
               >
                 <label
@@ -237,7 +197,22 @@ export default function PostPage(): React.ReactElement {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <ContentContainer>
+      <PDFViewer
+        file={file as string}
+        isOpen={modalPDF}
+        onClose={() => setModalPDF(false)}
+      />
+      <DeletePopUp
+        isOpen={isDeletePopupOpen}
+        data={"Post"}
+        onClose={handleDeletePopUp}
+        onEdit={() => {
+          handleDeletePopUp();
+          void handleDeletePost(selectedPost);
+        }}
+        menu="Post"
+      />
       <div className="grid grid-cols-1 gap-6">
         <div className="col-span-1">
           <div className="flex items-center justify-between gap-4">
@@ -249,18 +224,48 @@ export default function PostPage(): React.ReactElement {
                   setSearchParams((prev) => ({ ...prev, search: text }));
                 }}
               />
-              <button
+              <input
+                type="date"
+                placeholder="Post Date"
+                className="border rounded-full !border-gray-50 p-2"
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, date: e.target.value }))
+                }
+              />
+              <Select
+                value={searchParams.by}
+                className="border-gray-300 rounded-full"
+                onChange={(e) =>
+                  setSearchParams((prev) => ({
+                    ...prev,
+                    by: e.target.value === "Admin" ? "Admin" : "User",
+                  }))
+                }
+              >
+                <option value="">Posted By</option>
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
+              </Select>
+              <Button
                 onClick={() => {
-                  handleCreateBanner();
+                  setSearchParams({
+                    search: "",
+                    limit: 10,
+                    page: 1,
+                  });
                 }}
-                className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]/90"
+                className="bg-red-400 text-white hover:bg-red-400/90"
+              >
+                Reset Filter
+              </Button>
+              <Button
+                onClick={() => {
+                  handleCreatePost();
+                }}
+                className="bg-san-juan text-white hover:bg-san-juan/90"
               >
                 Create Post
-                <ChevronDownIcon
-                  className="-mr-1 -mb-1 h-5 w-5 text-white "
-                  aria-hidden="true"
-                />
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -275,40 +280,18 @@ export default function PostPage(): React.ReactElement {
                     loading={isLoading}
                   />
                 </div>
-                {warningMessage && (
-                  <div className={`text-sm text-red-400 font-normal flex my-4`}>
-                    <PiWarningCircleFill className="my-auto mr-2" />
-                    <span>{warningMessage}</span>
-                  </div>
-                )}
               </div>
             </div>
           </div>
           <div className="flex flex-col">
             <Pagination
-              currentPage={data!?.metadata.currentPage}
-              totalPages={data!?.metadata.totalPage}
+              currentPage={data!?.meta.currentPage}
+              totalPages={data!?.meta.totalPages}
               onPageChange={handlePageChange}
             />
           </div>
-          <div>
-            {isWarningPopupOpen && (
-              <WarningMaxPopUp
-                isOpen={isWarningPopupOpen}
-                data={warningMessage}
-                onClose={handleClosePopup}
-              />
-            )}
-            {selectedImageUrl && (
-              <PopUpImage
-                isOpen={isImagePopupOpen}
-                data={selectedImageUrl}
-                onClose={handleClosePopup}
-              />
-            )}
-          </div>
         </div>
       </div>
-    </div>
+    </ContentContainer>
   );
 }
