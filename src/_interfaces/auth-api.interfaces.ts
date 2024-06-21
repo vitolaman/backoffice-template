@@ -39,3 +39,10 @@ export interface OperatingAreaI {
   updatedAt: Date;
   deletedAt: Date;
 }
+
+export interface UpdateScore {
+  userId: string;
+  reference_id: string;
+  changes: number;
+  reference_type: "post" | "comment";
+}

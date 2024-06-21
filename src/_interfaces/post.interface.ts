@@ -20,8 +20,10 @@ export interface PostList {
   images: string[];
   file: string | null;
   likes: number;
+  userId: string | null;
   by_admin: boolean;
   created_at: string;
+  deleted_at: null | string;
 }
 
 export interface Metadata {

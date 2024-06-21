@@ -6,12 +6,12 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { Button, Select } from "react-daisyui";
+import { Button, Input, Modal, Select } from "react-daisyui";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { PostList, PostListReq } from "_interfaces/post.interface";
 import { Columns, Table } from "components/table/table";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdScoreboard } from "react-icons/md";
 import { errorHandler } from "services/errorHandler";
 import moment from "moment";
 import { useDeletePostMutation, usePostListQuery } from "services/modules/post";
@@ -19,17 +19,25 @@ import PDFViewer from "components/post/PDFViewer";
 import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
 import DeletePopUp from "components/modal/other/Delete";
 import { FaRegFilePdf } from "react-icons/fa";
-import CInput from "components/input";
 import ContentContainer from "components/container";
+import { useUpdateScoreMutation } from "services/modules/auth";
+import { UpdateScore } from "_interfaces/auth-api.interfaces";
+import { toast } from "react-toastify";
 
 export const postRouteName = "post";
 export default function PostPage(): React.ReactElement {
   const navigate = useNavigate();
+  const [score, setScore] = useState<number>(0);
+  const [scoreModal, setScoreModal] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useState<PostListReq>({
     search: "",
     limit: 10,
     page: 1,
+  });
+  const [scoreReferences, setScoreReferences] = useState({
+    userId: "",
+    reference_id: "",
   });
   const [selectedPost, setSelectedPost] = useState<string>("");
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
@@ -37,6 +45,7 @@ export default function PostPage(): React.ReactElement {
   const [file, setFile] = useState("");
   const { data, isLoading, refetch } = usePostListQuery(searchParams);
   const [deletePost] = useDeletePostMutation();
+  const [updateScore] = useUpdateScoreMutation();
   const handleDeletePopUp = () => {
     setIsDeletePopupOpen(!isDeletePopupOpen);
   };
@@ -54,6 +63,22 @@ export default function PostPage(): React.ReactElement {
     }
   };
 
+  const handleUpdateScore = async (): Promise<void> => {
+    try {
+      const statusUpdated: UpdateScore = {
+        ...scoreReferences,
+        changes: score,
+        reference_type: "post",
+      };
+      await updateScore(statusUpdated);
+      setScoreModal(false);
+      setScore(0);
+      setScoreReferences({ userId: "", reference_id: "" });
+      toast.success("Success add score to user");
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
   const header: Columns<PostList>[] = [
     {
       fieldId: "index",
@@ -152,6 +177,27 @@ export default function PostPage(): React.ReactElement {
                   See Detail
                 </label>
               </MenuItem>
+              {data?.by_admin === false && (
+                <MenuItem
+                  placeholder={""}
+                  className="p-0"
+                  onClick={() => {
+                    setScoreModal(true);
+                    setScoreReferences({
+                      userId: data.userId as string,
+                      reference_id: data.id,
+                    });
+                  }}
+                >
+                  <label
+                    htmlFor="item-1"
+                    className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100"
+                  >
+                    <MdScoreboard className="mt-1 me-3 h-4 w-4" />
+                    Add Score
+                  </label>
+                </MenuItem>
+              )}
               {data?.by_admin && (
                 <MenuItem
                   placeholder={""}
@@ -292,6 +338,46 @@ export default function PostPage(): React.ReactElement {
           </div>
         </div>
       </div>
+      <Modal
+        open={scoreModal}
+        backdrop={false}
+        className="flex flex-col justify-center items-center bg-white"
+      >
+        <Modal.Header className="flex flex-col items-center">
+          <h1 className="text-2xl text-center font-semibold">Add Score</h1>
+        </Modal.Header>
+        <Modal.Body className="flex flex-col gap-4">
+          <Input
+            value={score}
+            onChange={(e) => {
+              setScore(e.target.valueAsNumber);
+            }}
+            type="number"
+            className="text-start text-2xl font-medium w-[100px]"
+          />
+        </Modal.Body>
+        <Modal.Actions className="flex w-full flex-col items-center">
+          <Button
+            type="button"
+            className="w-[100%] rounded-full hover:text-success mt-2 bg-success text-white hover:bg-white/90 hover:border-san-juan"
+            onClick={() => {
+              void handleUpdateScore();
+            }}
+            disabled={score <= 0 || Number.isNaN(score)}
+          >
+            Add
+          </Button>
+          <Button
+            type="button"
+            className="w-[100%] rounded-full hover:text-san-juan mt-2 bg-san-juan text-white hover:bg-white/90 hover:border-san-juan"
+            onClick={() => {
+              setScoreModal(false);
+            }}
+          >
+            Close
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </ContentContainer>
   );
 }

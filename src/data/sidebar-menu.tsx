@@ -1,5 +1,6 @@
 import { forumRouteName } from "pages/forum/index.page";
 import { postRouteName } from "pages/post/index.page";
+import { reportPageRoutename } from "pages/report/index.page";
 import { userRouteName } from "pages/user-management/index.pages";
 
 interface SubMenuItem {
@@ -33,6 +34,10 @@ const menuItems: MenuItem[] = [
   {
     name: "User",
     path: userRouteName,
+  },
+  {
+    name: "Report",
+    path: reportPageRoutename,
   },
 ];
 

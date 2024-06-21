@@ -1,4 +1,8 @@
-import { LoginReqI, LoginResI } from "_interfaces/auth-api.interfaces";
+import {
+  LoginReqI,
+  LoginResI,
+  UpdateScore,
+} from "_interfaces/auth-api.interfaces";
 import { Api } from "services/api";
 
 export const userApi = Api.injectEndpoints({
@@ -34,8 +38,20 @@ export const userApi = Api.injectEndpoints({
         };
       },
     }),
+    updateScore: build.mutation<string, UpdateScore>({
+      query(body) {
+        return {
+          url: "/auth/admin/update-score",
+          method: "POST",
+          body,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation } = userApi;
+export const { useLoginMutation, useUpdateScoreMutation } = userApi;
