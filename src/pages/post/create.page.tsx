@@ -115,36 +115,6 @@ const CreatePost = () => {
             />
           </div>
         </div>
-        {/* <div className="flex flex-col gap-2 mb-4">
-          <label className="font-semibold">Publisher</label>
-          <Controller
-            control={control}
-            name="user_id"
-            render={({ field: { value, onChange } }) => (
-              <ReactSelect
-                styles={{
-                  control: (baseStyle) => ({
-                    ...baseStyle,
-                    padding: 5,
-                    borderColor: "#BDBDBD",
-                    borderRadius: "0.5rem",
-                  }),
-                }}
-                options={userListUpdated}
-                isSearchable={true}
-                // onInputChange={(e) => {
-                //   setSearch(e);
-                // }}
-                isLoading={isLoading}
-                value={userListUpdated.find((item) => {
-                  return item.value === value;
-                })}
-                onChange={(e) => onChange(e?.value)}
-              />
-            )}
-          />
-          <ValidationError error={errors.user_id} />{" "}
-        </div> */}
         <div className="flex justify-between items-center mt-10">
           <h1 className="font-semibold text-lg">Upload Photo</h1>
           <div className="flex gap-4">
