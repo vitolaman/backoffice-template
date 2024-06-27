@@ -16,10 +16,6 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   {
-    name: "Home",
-    path: "/home",
-  },
-  {
     name: "Post",
     path: postRouteName,
   },
