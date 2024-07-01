@@ -56,6 +56,16 @@ const UpdateEventModal: React.FC<UpdateModalProps> = ({
   useEffect(() => {
     if (data?.data) {
       reset(data.data);
+      let temp: UpdateEventForm = {
+        id: data?.data.id,
+        title: data?.data.title,
+        description: data?.data.description,
+        date: new Date(data?.data.date).toISOString().split("T")[0],
+        location: data?.data.location,
+        banner: data?.data.banner,
+        link: data?.data.link,
+      };
+      reset(temp);
     }
   }, [data?.data, reset]);
 
@@ -176,7 +186,7 @@ const UpdateEventModal: React.FC<UpdateModalProps> = ({
               >
                 {imagePreview ? (
                   <img
-                    className="flex mx-auto w-[500px] h-[166px] object-fill"
+                    className="flex mx-auto w-[500px] h-[166px] object-cover"
                     alt=""
                     src={imagePreview}
                   />
