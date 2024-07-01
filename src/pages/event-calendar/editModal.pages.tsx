@@ -55,7 +55,6 @@ const UpdateEventModal: React.FC<UpdateModalProps> = ({
 
   useEffect(() => {
     if (data?.data) {
-      reset(data.data);
       let temp: UpdateEventForm = {
         id: data?.data.id,
         title: data?.data.title,
