@@ -47,7 +47,7 @@ export default function DetailForumPage(): React.ReactElement {
       const statusUpdated: UpdateScore = {
         ...scoreReferences,
         changes: score,
-        reference_type: "comment",
+        reference_type: "forum",
       };
       await updateScore(statusUpdated);
       setScoreModal(false);
