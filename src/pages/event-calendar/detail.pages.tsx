@@ -15,6 +15,19 @@ const DetailEventPage: React.FC<DetailEventPageProps> = () => {
   const { id } = useParams<{ id: string }>();
   const { data } = useEventDetailQuery({ id: id! });
 
+  const isValidUrl = (url: string): boolean => {
+    try {
+      if (url) {
+        new URL(url);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  };
+
   return (
     <ContentContainer>
       <div className="flex flex-row justify-between">
@@ -29,11 +42,13 @@ const DetailEventPage: React.FC<DetailEventPageProps> = () => {
         </Button>
       </div>
       <div className="mt-6">
+      {isValidUrl(data?.data.banner || "") && 
         <img
-          className="flex mx-auto mb-6 w-full h-48 object-cover"
+          className="flex mx-auto mb-6 w-full h-full object-fill"
           src={data?.data.banner}
           alt=""
         />
+      }
       </div>
       <div className="flex flex-col gap-6">
         <div className="flex flex-row items-center gap-2">
