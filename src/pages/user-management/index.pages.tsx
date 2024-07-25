@@ -3,13 +3,6 @@ import ContentContainer from "components/container";
 import { useNavigate } from "react-router-dom";
 import ActiveUserPage from "components/user-management/ActiveUser";
 import PendingUserPage from "components/user-management/PendingUser";
-import {
-  Tabs,
-  TabsHeader,
-  TabsBody,
-  Tab,
-  TabPanel,
-} from "@material-tailwind/react";
 
 
 export const userRouteName = "user";
@@ -31,12 +24,12 @@ const UserPage: React.FC = () => {
         >
           Active User
         </div>
-        <div
+        {/* <div
           className={`py-2 px-6 cursor-pointer ${tabIndex === 1 ? 'border-b-2 border-san-juan' : ''}`}
           onClick={() => handleTabChange(1)}
         >
           Pending User
-        </div>
+        </div> */}
       </div>
       {tabIndex === 0 && <ActiveUserPage />}
       {tabIndex === 1 && <PendingUserPage />}

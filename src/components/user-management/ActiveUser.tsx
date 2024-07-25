@@ -10,7 +10,7 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import { Button } from "react-daisyui";
-import { MdDelete, MdVisibility } from "react-icons/md";
+import { MdBlock, MdDelete, MdVisibility } from "react-icons/md";
 import { toast } from "react-toastify";
 import { errorHandler } from "services/errorHandler";
 import DeletePopUp from "components/modal/other/Delete";
@@ -135,8 +135,8 @@ const ActiveUserPage: React.FC = () => {
                   htmlFor="item-1"
                   className="flex cursor-pointer items-center gap-2 p-2 text-red-800 hover:bg-gray-100"
                 >
-                  <MdDelete className="mt-1 me-3 h-4 w-4" />
-                  Delete User
+                  <MdBlock className="mt-1 me-3 h-4 w-4" />
+                  Block User
                 </label>
               </MenuItem>
             </MenuList>
